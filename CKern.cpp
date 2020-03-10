@@ -4182,8 +4182,11 @@ double CPolyardKern::getGradParam(unsigned int index, const CMatrix& X, const CM
 // Functions that operate on CKern.
 ostream& operator<<(ostream& out, const CKern& kern)
 {
-  out <<  kern.display(out);
-  return out;
+  //cout<<wctype(out)<<endl;
+  //cout<<wctype(kern.display(out))<<endl;
+  //out <<  kern.display(cout);
+//return out;
+;
 }
 void writeKernToStream(const CKern& kern, ostream& out)
 {
