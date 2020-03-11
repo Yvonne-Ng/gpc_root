@@ -27,6 +27,12 @@ ivm.o: ivm.cpp CIvm.h CKern.h CMatrix.h ivm.h CClctrl.h
 gp: gp.o CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
 	$(LD) ${XLINKERFLAGS} -o gp gp.o CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o $(LDFLAGS)
 
+#dummy_main: dummy_main.o gp_config.o
+#	$(LD)  ${XLINKERFLAGS} -c $(LDFLAGS)
+
+dummy_main: dummy_main.o 
+	$(LD)  ${XLINKERFLAGS} -o  dummy_main dummy_main.o $(LDFLAGS)
+
 libgp$(LIBSEXT): CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
 	$(LIBSCOMMAND) libgp$(LIBSEXT) CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
 
@@ -38,6 +44,11 @@ gp.o: gp.cpp gp.h ndlexceptions.h ndlstrutil.h CMatrix.h ndlassert.h \
   CDataModel.h CDist.h CGp.h CMltools.h COptimisable.h CNoise.h CClctrl.h
 	$(CC) -c gp.cpp -o gp.o $(CCFLAGS)
 
+dummy_main.o: dummy_main.cpp gp_config.h
+	$(CC) -c dummy_main.cpp -o dummy_main.o $(CCFLAGS)
+
+gp_config.o: gp_config.h
+	$(CC) -c gp_config.h -o gp_config.o $(CCFLAGS)
 
 # To compile tests, the MATLAB interface must be enabled (i.e. define _NDLMATLAB)
 tests: testDist testGp testIvm testKern testMatrix testMltools testNdlutil testNoise testTransform  

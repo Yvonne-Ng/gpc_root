@@ -19,7 +19,13 @@
 
 class gp_TH1 {
  public:
+  gp_config* Config;
+// TODO, make these private and create a set function for them
+  CMatrix X;
+  CMatrix y;
   gp_TH1(gp_config* config);
+
+
   void readFromTH1(TH1* hist);
   void learn();
   void relearn();
