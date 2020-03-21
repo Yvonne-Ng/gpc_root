@@ -7,6 +7,16 @@
 
 include make.linux
 
+# Adding root compilation 
+#CC=g++
+#ROOT_CFLAGS=-c -g -Wall `root-config --cflags --incdir --libs`
+#ROOT_CFLAGS=-c -g -Wall `root-config --cflags `
+ROOT_CFLAGS=-c -Wall `root-config --cflags `
+ROOT_LDFLAGS=`root-config --glibs `
+SOURCES=main.cc XrayCrossSectionInterperlater.cc
+OBJECTS=$(SOURCES:.cc=.o)
+
+
 all: gplvm ivm gp libgp$(LIBSEXT) libgp$(LIBDEXT)
 
 gplvm: gplvm.o CClctrl.o CGplvm.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
@@ -25,13 +35,10 @@ ivm.o: ivm.cpp CIvm.h CKern.h CMatrix.h ivm.h CClctrl.h
 	$(CC) -c ivm.cpp -o ivm.o $(CCFLAGS)
 
 gp: gp.o CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
-	$(LD) ${XLINKERFLAGS} -o gp gp.o CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o $(LDFLAGS)
+	$(LD) ${XLINKERFLAGS} -o gp gp.o CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o $(LDFLAGS) $(ROOT_LDFLAGS) 
 
-#dummy_main: dummy_main.o gp_config.o
-#	$(LD)  ${XLINKERFLAGS} -c $(LDFLAGS)
-
-dummy_main: dummy_main.o 
-	$(LD)  ${XLINKERFLAGS} -o  dummy_main dummy_main.o $(LDFLAGS)
+dummy_main: dummy_main.o  gp_TH1.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o CGp.o
+	$(LD)  ${XLINKERFLAGS} -o  dummy_main dummy_main.o  gp_TH1.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o CGp.o $(LDFLAGS) $(ROOT_LDFLAGS)
 
 libgp$(LIBSEXT): CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
 	$(LIBSCOMMAND) libgp$(LIBSEXT) CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
@@ -39,16 +46,27 @@ libgp$(LIBSEXT): CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlst
 libgp$(LIBDEXT): CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
 	$(LIBDCOMMAND) libgp$(LIBDEXT) CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
 
-gp.o: gp.cpp gp.h ndlexceptions.h ndlstrutil.h CMatrix.h ndlassert.h \
+gp.o: gp.cpp gp.h \
+	ndlexceptions.h ndlstrutil.h CMatrix.h ndlassert.h \
   CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h \
   CDataModel.h CDist.h CGp.h CMltools.h COptimisable.h CNoise.h CClctrl.h
 	$(CC) -c gp.cpp -o gp.o $(CCFLAGS)
 
-dummy_main.o: dummy_main.cpp gp_config.h
-	$(CC) -c dummy_main.cpp -o dummy_main.o $(CCFLAGS)
+dummy_main.o: dummy_main.cpp gp_TH1.h \
+	ndlexceptions.h ndlstrutil.h CMatrix.h ndlassert.h \
+  CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h \
+  CDataModel.h CDist.h CGp.h CMltools.h COptimisable.h CNoise.h CClctrl.h
+	$(CC) -c dummy_main.cpp -o dummy_main.o $(CCFLAGS) $(ROOT_CFLAGS)
 
-gp_config.o: gp_config.h
-	$(CC) -c gp_config.h -o gp_config.o $(CCFLAGS)
+
+
+# if your lib is referrenced as a header you don't need to include the .o file too 
+gp_TH1.o: gp_TH1.cpp gp_TH1.h
+	$(CC) -c gp_TH1.cpp -o gp_TH1.o $(CCFLAGS) $(ROOT_CFLAGS)
+
+# if your lib is referrenced as a header you don't need to include the .o file too 
+#gp_config.o: gp_config.h
+#	$(CC) -c gp_config.h -o gp_config.o $(CCFLAGS)
 
 # To compile tests, the MATLAB interface must be enabled (i.e. define _NDLMATLAB)
 tests: testDist testGp testIvm testKern testMatrix testMltools testNdlutil testNoise testTransform  

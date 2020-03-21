@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
 CClgp::CClgp(int arc, char** arv) : CClctrl(arc, arv)
 {
 }
+
 void CClgp::learn()
 {
   incrementArgument();
