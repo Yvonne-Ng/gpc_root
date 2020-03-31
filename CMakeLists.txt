@@ -1,45 +1,93 @@
-PROJECT( CMatrix )
+atlas_subdir( GPC )
 
-OPTION( USE_HDF5 "Build with HDF5 support." )
+# As a Fortran compiler may not have been set up yet when this file is included.
+if( ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" ) OR
+    ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" ) )
+   _add_flag( CMAKE_Fortran_FLAGS "-ffixed-line-length-132" )
+   _add_flag( CMAKE_Fortran_FLAGS "-DFVOIDP=INTEGER*${CMAKE_SIZEOF_VOID_P}" )
+   _add_flag( CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops" )
+   _add_flag( CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-funroll-all-loops" )
+endif()
 
-SET( CMAKE_CXX_FLAGS    "-fPIC" )
-SET( CMAKE_C_FLAGS      "-fPIC" )
+# no include directory
+#include_directories(${CMAKE_SOURCE_DIR}/stuff/include) # -I flags for compiler
+find_package( ROOT COMPONENTS Tree Hist Gpad )
 
-SET( MLPROJECTS_BASE_DIR /home/psauer/software/sources/mlprojects )
+#===gp====
+# adding gp.cpp as an executable
+atlas_add_executable( gp gp.cpp gp.h
+INCLUDE_DIRS ${ROOT_INCLUDE_DIRS} ${BOOST_INCLUDE_DIRS}
+LINK_LIBRARIES  ${ROOT_LIBRARIES} ${BOOST_LIBRARIES} CClctrl CGp CMatrix ndlfortran CNoise ndlutil ndlstrutil CTransform COptimisable CKern CDist ndlassert )
+#target_link_library( gp CClctrl CGp CMatrix ndlfortran CNoise ndlutil ndlstrutil CTransform COptimisable CKern CDist ndlassert )
+#gp.o: gp.cpp gp.h ndlexceptions.h ndlstrutil.h CMatrix.h ndlassert.h \
+#  CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h \
+#  CDataModel.h CDist.h CGp.h CMltools.h COptimisable.h CNoise.h CClctrl.h
 
-if(USE_HDF5)
-    ADD_DEFINITIONS(-D_HDF5)
-    FIND_PACKAGE( HDF5 )
-endif(USE_HDF5)
+# linking gp with its dependence
+#======
 
-INCLUDE_DIRECTORIES( . ${HDF5_INCLUDE_DIR}
-                       ${MLPROJECTS_BASE_DIR}/ndlutil/src
-                       ${MLPROJECTS_BASE_DIR}/matrix/src
-                       ${MLPROJECTS_BASE_DIR}/branches/helper/src
-                       /usr/include
-                       /usr/local/include        #for boost
-                       /usr/local/include/eigen3 #for eigen3
-                    )
+#===ndlassert==
+# adding a library ndlassert
+atlas_add_library(ndlassert ndlassert.cpp ndlassert.h ndlexceptions.h
+    PUBLIC_HEADER GPc)
+# no linking of libs required
+#===============
 
-LINK_DIRECTORIES( /usr/lib /usr/local/lib ${HDF5_LIBRARY_DIRS} )
+#===ndlfortran===
+atlas_add_library(ndlfortran ndlfortran.f)
+SET_TARGET_PROPERTIES(ndlfortran PROPERTIES LINKER_LANGUAGE FORTRAN)
+#=================
 
-SET( CMatrix_sources
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/CNdlInterfaces.h
-    ${MLPROJECTS_BASE_DIR}/matrix/src/CMatrix.h                  ${MLPROJECTS_BASE_DIR}/matrix/src/CMatrix.cpp
+#===ndlstrutil
+atlas_add_library(ndlstrutil ndlstrutil.cpp ndlstrutil.h ndlexceptions.h)
+#=================
 
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlassert.h               ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlassert.cpp
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlexceptions.h
+#===ndlutil===
+atlas_add_library(ndlutil ndlutil.cpp ndlutil.h ndlassert.h ndlexceptions.h ndlfortran.h)
+#=================
 
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/lapack.h
-    #${MLPROJECTS_BASE_DIR}/ndlutil/src/f2c.h
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlfortran.h              ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlfortran.c
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlstrutil.h              ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlstrutil.cpp
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlutil.h                 ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlutil.cpp
-    ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlstrutil.h              ${MLPROJECTS_BASE_DIR}/ndlutil/src/ndlstrutil.cpp
-)
- 
-ADD_DEFINITIONS( -D_FORTRAN_MAIN_FIX )
-ADD_LIBRARY( cmatrix STATIC ${CMatrix_sources} )
-TARGET_LINK_LIBRARIES( cmatrix hdf5_hl hdf5 f2c m lapack blas )
+#===CIvm===
+atlas_add_library(CIvm CIvm.cpp CIvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h)
+#=================
 
-SUBDIRS( test )
+#=====CGP======
+atlas_add_library(CGp CGp.cpp CGp.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h)
+#=================
+
+#=====CMatrix======
+atlas_add_library(CMatrix CMatrix.cpp CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h)
+#=================
+
+
+#=====CDist======
+atlas_add_library(CDist CDist.cpp CDist.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CTransform.h)
+#=================
+
+
+#=====COptimisable===
+atlas_add_library(COptimisable COptimisable.cpp COptimisable.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h)
+#=================
+
+#=====CTransform-===
+atlas_add_library(CTransform CTransform.cpp CTransform.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h)
+#=================
+
+
+#=====CKern-===
+atlas_add_library(CKern CKern.cpp CKern.h ndlassert.h ndlexceptions.h CTransform.h CMatrix.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CDataModel.h CDist.h)
+#=================
+
+
+#=====CNoise-===
+atlas_add_library(CNoise CNoise.cpp CNoise.h ndlexceptions.h ndlutil.h ndlassert.h ndlfortran.h ndlstrutil.h CMatrix.h CNdlInterfaces.h lapack.h
+  CTransform.h COptimisable.h CDist.h CKern.h CDataModel.h)
+#=================
+
+
+atlas_add_library(CClctrl CClctrl.cpp CClctrl.h ndlstrutil.h ndlexceptions.h ndlutil.h ndlassert.h ndlfortran.h CMatrix.h CNdlInterfaces.h lapack.h)
+
+atlas_add_library(CGplvm CGplvm.cpp CGplvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h)
+
+#====
+#suspect CClgplvm is not being used, skipping
+# skipping test that uses matlab

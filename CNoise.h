@@ -354,7 +354,7 @@ class CGaussianNoise : public CNoise {
   }
   inline void setVarSigma(double val, unsigned int i, unsigned int j) 
   {
-    SANITYCHECK(!isnan(val));
+    SANITYCHECK(!std::isnan(val));
     SANITYCHECK(val>=0);
     varSigma.setVal(val, i, j);
   }
@@ -471,7 +471,7 @@ class CScaleNoise : public CNoise {
   }
   inline void setVarSigma(double val, unsigned int i, unsigned int j) 
   {
-    SANITYCHECK(!isnan(val));
+    SANITYCHECK(!std::isnan(val));
     SANITYCHECK(val>=0);
     varSigma.setVal(val, i, j);
   }
@@ -548,7 +548,7 @@ class CProbitNoise : public CNoise
   }
   inline void setVarSigma(double val, unsigned int i, unsigned int j) 
   {
-    SANITYCHECK(!isnan(val));
+    SANITYCHECK(!std::isnan(val));
     SANITYCHECK(val>=0);
     varSigma.setVal(val, i, j);
   }
@@ -626,7 +626,7 @@ class CNcnmNoise : public CNoise {
   }
   inline void setVarSigma(double val, unsigned int i, unsigned int j) 
   {
-    SANITYCHECK(!isnan(val));
+    SANITYCHECK(!std::isnan(val));
     SANITYCHECK(val>=0);
     varSigma.setVal(val, i, j);
   }
@@ -736,7 +736,7 @@ class COrderedNoise : public CNoise {
   }
   inline void setVarSigma(double val, unsigned int i, unsigned int j) 
   {
-    SANITYCHECK(!isnan(val));
+    SANITYCHECK(!std::isnan(val));
     SANITYCHECK(val>=0);
     varSigma.setVal(val, i, j);
   }

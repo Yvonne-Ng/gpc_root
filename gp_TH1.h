@@ -22,6 +22,15 @@
 class gp_TH1{
  public:
   gp_config* Config;
+
+  CGp* pmodel;
+  CCmpndKern kern;
+
+  CGaussianNoise noise;
+
+  int approxType;
+
+  int activeSetSize;
 // TODO, make these private and create a set function for them
   CMatrix X;
   CMatrix y;
@@ -33,7 +42,9 @@ class gp_TH1{
 
 
   void writeGpToFile(const CGp& model, const string modelFileName, const string comment);
-  void learn();
+  void learn(string comment);
+  void fitAndOutput();
+  TH1D* fitAndOutputTH1();
   void relearn();
   void printXY();
 

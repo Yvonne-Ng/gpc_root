@@ -390,7 +390,12 @@ void CClgp::learn()
 
   CGp* pmodel;
   CMatrix bK(1,1,0.0);
+
   pmodel = new CGp(&kern, &noise, &X, approxType, activeSetSize, getVerbosity());
+
+  cout<<"at initialization: "<<typeid(pmodel->getKernel()).name()<<endl;
+
+  cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
   if(optimiser=="scg")
     pmodel->setDefaultOptimiser(CGp::SCG);
   else if(optimiser=="conjgrad")
@@ -618,6 +623,9 @@ void CClgp::gnuplot()
   CMatrix X;
   readData(X, y, dataFileName);
   CGp* pmodel=readGpFromFile(modelFileName, getVerbosity());
+  cout<<"kernel type: "<<typeid(pmodel->getKernel()).name()<<endl;
+
+  cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
   pmodel->py=&y;
   pmodel->updateM();
   pmodel->pX=&X;
@@ -859,10 +867,10 @@ void CClgp::gnuplot()
       int j;
       for(j=0, x=minVals.getVal(0, 0); j<numx; x+=xdiff, j++) 
       {
-	Xinvals.setVal(x, j, 0);
-	regressOut.setVal(x, j, 0);
-	errorBarPlus.setVal(x, j, 0);
-	errorBarMinus.setVal(x, j, 0);
+          Xinvals.setVal(x, j, 0);
+          regressOut.setVal(x, j, 0);
+          errorBarPlus.setVal(x, j, 0);
+          errorBarMinus.setVal(x, j, 0);
       }
       CMatrix outVals(Xinvals.getRows(), pmodel->getOutputDim());
       CMatrix stdVals(Xinvals.getRows(), pmodel->getOutputDim());

@@ -4,7 +4,6 @@
 #  July 6, 2005
 #  Dec 23, 2008
 # dependencies created with gcc -MM XXX.cpp
-
 include make.linux
 
 # Adding root compilation 
@@ -38,7 +37,7 @@ gp: gp.o CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o 
 	$(LD) ${XLINKERFLAGS} -o gp gp.o CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o $(LDFLAGS) $(ROOT_LDFLAGS) 
 
 dummy_main: dummy_main.o  gp_TH1.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o CGp.o
-	$(LD)  ${XLINKERFLAGS} -o  dummy_main dummy_main.o  gp_TH1.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o CGp.o $(LDFLAGS) $(ROOT_LDFLAGS)
+	$(LD)  ${XLINKERFLAGS} -g -o  dummy_main dummy_main.o  gp_TH1.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o CGp.o $(LDFLAGS) $(ROOT_LDFLAGS)
 
 libgp$(LIBSEXT): CClctrl.o CGp.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
 	$(LIBSCOMMAND) libgp$(LIBSEXT) CGp.o CClctrl.o CMatrix.o ndlfortran.o CNoise.o ndlutil.o ndlstrutil.o CTransform.o COptimisable.o CKern.o CDist.o ndlassert.o
@@ -188,7 +187,6 @@ ndlassert.o: ndlassert.cpp ndlassert.h ndlexceptions.h
 # Collected FORTRAN utilities.
 ndlfortran.o: ndlfortran.f
 	$(FC) -c ndlfortran.f -o ndlfortran.o $(FCFLAGS)
-
 
 clean:
 	rm *.o

@@ -145,6 +145,7 @@ class CKern : public CMatInterface, public CStreamInterface, public CTransformab
   // Compute portions of the kernel matrix.
   virtual void compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const
   {
+
     DIMENSIONMATCH(K.rowsMatch(X));
     DIMENSIONMATCH(K.getCols()==X2.getRows());
     for(unsigned int i=0; i<K.getRows(); i++)
@@ -505,7 +506,7 @@ class CCmpndKern: public CComponentKern {
   double computeElement(const CMatrix& X1, unsigned int index1, 
 		 const CMatrix& X2, unsigned int index2) const;
 /*   void compute(CMatrix& K, const CMatrix& X) const; */
-/*   void compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const; */
+   void compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const;
 /*   void compute(CMatrix& K, const CMatrix& X, const CMatrix& X2, unsigned int row) const; */
   //  void compute(CMatrix& K, const CMatrix& X, const vector<unsigned int> indices) const;
   void getGradParams(CMatrix& g, const CMatrix& X, const CMatrix& X2, const CMatrix& cvGrd, bool regularise=true) const;

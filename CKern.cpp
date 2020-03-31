@@ -250,22 +250,27 @@ double CCmpndKern::computeElement(const CMatrix& X1, unsigned int index1,
 //     K.setVal(kval, i, row);
 //   }
 // }
-// void CCmpndKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const
-// {
-//   DIMENSIONMATCH(K.rowsMatch(X));
-//   DIMENSIONMATCH(K.getCols()==X2.getRows());
-//   //CMatrix K2(K.getRows(), K.getCols());
-//   for(unsigned int i=0; i<X.getRows(); i++)
-//   {
-//     for(unsigned int j=0; j<X2.getRows(); j++)
-//     {
-//       double kval=0.0;
-//       for(unsigned int k=0; k<components.size(); k++)
-// 	kval+=components[k]->computeElement(X, i, X2, j);
-//       K.setVal(kval, i, j);
-//     }
-//   }
-// }
+ void CCmpndKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const
+ {
+  cout<<"here 1 "<<endl;
+   DIMENSIONMATCH(K.rowsMatch(X));
+   DIMENSIONMATCH(K.getCols()==X2.getRows());
+   //CMatrix K2(K.getRows(), K.getCols());
+   //
+  cout<<"here 2 "<<endl;
+   for(unsigned int i=0; i<X.getRows(); i++)
+   {
+     for(unsigned int j=0; j<X2.getRows(); j++)
+     {
+       double kval=0.0;
+       for(unsigned int k=0; k<components.size(); k++)
+ 	kval+=components[k]->computeElement(X, i, X2, j);
+       K.setVal(kval, i, j);
+     }
+   }
+
+  cout<<"here 3 "<<endl;
+ }
 void CCmpndKern::getGradParams(CMatrix& g, const CMatrix& X, const CMatrix& X2, const CMatrix& covGrad, bool regularise) const
 {
   DIMENSIONMATCH(g.getRows()==1);
@@ -717,8 +722,14 @@ void CWhiteKern::compute(CMatrix& K, const CMatrix& X) const
 
 void CWhiteKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const
 {
+
+  cout<<"compute got here"<<endl;
   DIMENSIONMATCH(K.rowsMatch(X));
+
+  cout<<"compute got here 1"<<endl;
   DIMENSIONMATCH(K.getCols()==X2.getRows());
+
+  cout<<"compute got here 2"<<endl;
   K.zeros();
 }
 void CWhiteKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2, unsigned int row) const
@@ -865,8 +876,14 @@ void CWhitefixedKern::compute(CMatrix& K, const CMatrix& X) const
 
 void CWhitefixedKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const
 {
+
+  cout<<"compute got here 1"<<endl;
   DIMENSIONMATCH(K.rowsMatch(X));
+
+  cout<<"compute got here 2"<<endl;
   DIMENSIONMATCH(K.getCols()==X2.getRows());
+
+  cout<<"compute got here 3"<<endl;
   K.zeros();
 }
 void CWhitefixedKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2, unsigned int row) const
@@ -1001,9 +1018,16 @@ void CBiasKern::compute(CMatrix& K, const CMatrix& X) const
 }
 
 void CBiasKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const
+
 {
+
+  cout<<"compute got here 1"<<endl;
   DIMENSIONMATCH(K.rowsMatch(X));
+
+  cout<<"compute got here 2"<<endl;
   DIMENSIONMATCH(K.getCols()==X2.getRows());
+
+  cout<<"compute got here 3"<<endl;
   K.setVals(variance);
 }
 void CBiasKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2, unsigned int row) const
@@ -1147,6 +1171,7 @@ double CRbfKern::getWhite() const
 double CRbfKern::computeElement(const CMatrix& X1, unsigned int index1, 
 				const CMatrix& X2, unsigned int index2) const
 {
+
   double k = X1.dist2Row(index1, X2, index2);
   k = 0.5*k*inverseWidth;
   k = variance*exp(-k);
@@ -2341,8 +2366,14 @@ void CLinKern::compute(CMatrix& K, const CMatrix& X) const
 
 void CLinKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2) const
 {
+
+  cout<<"compute got here 1"<<endl;
   DIMENSIONMATCH(K.rowsMatch(X));
+
+  cout<<"compute got here 2"<<endl;
   DIMENSIONMATCH(K.getCols()==X2.getRows());
+
+  cout<<"compute got here 3"<<endl;
   K.gemm(X, X2, variance, 0.0, "n", "t");
 }
 void CLinKern::compute(CMatrix& K, const CMatrix& X, const CMatrix& X2, unsigned int row) const

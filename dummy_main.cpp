@@ -33,10 +33,7 @@ int main(int argc, char* argv[])
   cout<<"hisitogram: "<<hist<<endl;
   GP_TH1->readFromTH1(hist);
   GP_TH1->printXY();
-  GP_TH1->learn();
-
-  
-
-
+  GP_TH1->learn("testlalala");
+  GP_TH1->fitAndOutput();
 
 }

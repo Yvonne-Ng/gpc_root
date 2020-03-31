@@ -3,7 +3,9 @@
 CClctrl::CClctrl(int arc, char** arv) : argc(arc), argv(arv)
 {
   argNo=1;
-  fileFormat = 0; // svmlight format
+  fileFormat = 0; // svmlight format, 
+  //fileFormat = 1; // matlab format
+  //fileFormat = 2; // TH1D format, 
   verbosity = 2; // second highest level (highest is 3)
   time_t seconds;
   time(&seconds);
@@ -52,6 +54,7 @@ void CClctrl::waitForSpace()
   char ch;
   cin.get(ch);    
 }
+//TO DO make read SVML histogram 
 int CClctrl::readSvmlDataFile(CMatrix& X, CMatrix& y, const string fileName)
 {
   ifstream in(fileName.c_str());
@@ -154,10 +157,14 @@ int CClctrl::readSvmlDataFile(CMatrix& X, CMatrix& y, const string fileName)
 		      
 	    double featVal = atof(featValStr.c_str());
 	    X.setVal(featVal, pointNo, featNum-1);
+        std::cout<<"pointNo : "<<pointNo<<std::endl;
+        std::cout<<"featVal : "<<featVal<<std::endl;
 	  }
 	  else
 	  {
 	    y.setVal(atof(token.c_str()), pointNo);
+
+        std::cout<<"token.c_str() : "<<token.c_str()<<std::endl;
 	    featureRead=true;
 	  }
 	}
@@ -170,6 +177,19 @@ int CClctrl::readSvmlDataFile(CMatrix& X, CMatrix& y, const string fileName)
   return -1;
 }
 
+//void CClctrl::readDataTH1(CMatrix& X, CMatrix& y, const TH1* histogram)
+//
+//{// Reading in a histogram
+//  double * X ; 
+//  double * y;
+//  for (int i =0; i< histogram.GetXbins(); i++){
+//           
+//      X[i]=histogram.GetBinCenter(i);
+//      y[i]= histogram.GetBinContent(i);
+//  }
+//
+//}
+  
 void CClctrl::readData(CMatrix& X, CMatrix& y, const string fileName)
 {
   string m = getMode();

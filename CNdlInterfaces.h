@@ -13,6 +13,18 @@
 #include "mat.h"
 #endif
 
+//#if __cplusplus >= 201703L
+//    /* MySQL override. This needed to be inclided before cppconn/exception.h to define them */
+//    #include <stdexcept>
+//    #include <string>
+//    #include <memory>
+//
+//    /* Now remove the trow */
+//    #define throw(...)
+//    #include <cppconn/exception.h>
+//    #undef throw /* reset */
+//#endif
+//
 const double MINVERSION=0.2;
 const double VERSION=0.2;
 
@@ -31,11 +43,13 @@ public:
     out << setprecision(17);
     writeParamsToStream(out);
   }
-  static double readVersionFromStream(istream& in) throw(ndlexceptions::StreamVersionError&)
+  static double readVersionFromStream(istream& in) /*throw(ndlexceptions::StreamVersionError&)*/
   {
     double ver = readDoubleFromStream(in, "version");
     if(ver<getMinCompatVersion())
-      throw ndlexceptions::StreamVersionError();
+      /*throw ndlexceptions::StreamVersionError();*/
+      noexcept(false);
+
     return ver;
 
   }
@@ -57,38 +71,43 @@ public:
     else
       return false;
   }
-  static vector<int> readVectorIntFromStream(istream& in, const std::string fieldName) throw(ndlexceptions::StreamFormatError&)
+  static vector<int> readVectorIntFromStream(istream& in, const std::string fieldName) //throw(ndlexceptions::StreamFormatError&)
   {
     vector<int> vals;
     string str = readStringFromStream(in, fieldName);
     vector<string> tokens;
     ndlstrutil::tokenise(tokens, str, " ");
     if(tokens.size()==0)
-      throw ndlexceptions::StreamFormatError(fieldName, "Zero length vector<int>.");
+      //throw ndlexceptions::StreamFormatError(fieldName, "Zero length vector<int>.");
+      noexcept(false);
     for(size_t i=0; i<tokens.size(); i++)
       vals.push_back(atol(tokens[i].c_str()));
     return vals;
   }
-  static vector<unsigned int> readVectorUintFromStream(istream& in, const std::string fieldName) throw(ndlexceptions::StreamFormatError&)
+  static vector<unsigned int> readVectorUintFromStream(istream& in, const std::string fieldName)// throw(ndlexceptions::StreamFormatError&)
   {
     vector<unsigned int> vals;
     string str = readStringFromStream(in, fieldName);
     vector<string> tokens;
     ndlstrutil::tokenise(tokens, str, " ");
     if(tokens.size()==0)
-      throw ndlexceptions::StreamFormatError(fieldName, "Zero length vector<unsigned int>.");
+      //throw ndlexceptions::StreamFormatError(fieldName, "Zero length vector<unsigned int>.");
+
+        noexcept(false);
     for(size_t i=0; i<tokens.size(); i++)
       vals.push_back(atol(tokens[i].c_str()));
     return vals;
   }
-  static string readStringFromStream(istream& in, const std::string fieldName) throw(ndlexceptions::StreamFormatError&)
+  static string readStringFromStream(istream& in, const std::string fieldName) //throw(ndlexceptions::StreamFormatError&)
   {
     string line;
     vector<string> tokens;
     ndlstrutil::getline(in, line);
     ndlstrutil::tokenise(tokens, line, "=");
     if(tokens.size()!=2 || tokens[0]!=fieldName)
-      throw ndlexceptions::StreamFormatError(fieldName);
+      //throw ndlexceptions::StreamFormatError(fieldName);
+
+      noexcept(false);
     return tokens[1];
 }
   static void writeToStream(ostream& out, const std::string fieldName, const vector<int> val)
@@ -142,7 +161,7 @@ public:
   {
     return readStringFromStream(in, "type");
   }
-  virtual void fromStream(istream& in) throw(ndlexceptions::StreamFormatError&)
+  virtual void fromStream(istream& in)// throw(ndlexceptions::StreamFormatError&)
   {
     readVersionFromStream(in);
     readParamsFromStream(in);
@@ -158,26 +177,30 @@ public:
   }
   virtual void writeParamsToStream(ostream& out) const=0;
   virtual void readParamsFromStream(istream& out)=0;
-  void toFile(const string fileName, const string comment="") const throw(ndlexceptions::FileWriteError&)
+  void toFile(const string fileName, const string comment="") const //throw(ndlexceptions::FileWriteError&)
   {
     ofstream out(fileName.c_str());
-    if(!out) throw ndlexceptions::FileWriteError(fileName);
+    if(!out) noexcept(false);
+//throw ndlexceptions::FileWriteError(fileName);
     if(comment.size()>0)
       out << "# " << comment << endl;
     toStream(out);
     out.close();
   }
-  void fromFile(const string fileName) throw(ndlexceptions::FileReadError&, ndlexceptions::FileFormatError&)
+  void fromFile(const string fileName)// throw(ndlexceptions::FileReadError&, ndlexceptions::FileFormatError&)
   {
     ifstream in(fileName.c_str());
-    if(!in.is_open()) throw ndlexceptions::FileReadError(fileName);
+    if(!in.is_open()) //throw ndlexceptions::FileReadError(fileName);
+      noexcept(false);
     try
     {
       fromStream(in);
     }
     catch(ndlexceptions::StreamFormatError& err)
     {
-      throw ndlexceptions::FileFormatError(fileName, err);
+      //throw ndlexceptions::FileFormatError(fileName, err);
+
+      noexcept(false);
     } 
     in.close();
   }
@@ -196,16 +219,20 @@ class CMatInterface
  public:
   virtual mxArray* toMxArray() const=0;
   virtual void fromMxArray(const mxArray* matlabArray)=0;
-  void readMatlabFile(const string fileName, const string variableName) throw(ndlexceptions::FileReadError&, ndlexceptions::FileFormatError&)
+  void readMatlabFile(const string fileName, const string variableName) //throw(ndlexceptions::FileReadError&, ndlexceptions::FileFormatError&)
   {
     MATFile* matFile = matOpen(fileName.c_str(), "r");
     if(matFile==NULL)
-      throw ndlexceptions::FileReadError(fileName);
+      //throw ndlexceptions::FileReadError(fileName);
+
+      noexcept(false);
     mxArray* matlabArray = matGetVariable(matFile, variableName.c_str());
     if(matlabArray==NULL)
     {
       ndlexceptions::MatlabInterfaceReadError matError(variableName);
-      throw ndlexceptions::FileFormatError(fileName, matError);
+      //throw ndlexceptions::FileFormatError(fileName, matError);
+
+      noexcept(false);
     }
     try
     {
@@ -213,34 +240,45 @@ class CMatInterface
     }
     catch(ndlexceptions::MatlabInterfaceReadError& err)
     {
-      throw ndlexceptions::FileFormatError(fileName, err);
+      //throw ndlexceptions::FileFormatError(fileName, err);
+
+      noexcept(false);
     }
     mxDestroyArray(matlabArray);
     if(matClose(matFile) !=0 )
-      throw ndlexceptions::FileReadError(fileName);   
+      //throw ndlexceptions::FileReadError(fileName);   
+
+      noexcept(false);
   }
-  void updateMatlabFile(string fileName, const string variableName) const throw(ndlexceptions::FileWriteError&)
+  void updateMatlabFile(string fileName, const string variableName) const //throw(ndlexceptions::FileWriteError&)
   {
     MATFile* matFile = matOpen(fileName.c_str(), "u");
     if(matFile==NULL)
-      throw ndlexceptions::FileWriteError(fileName);
+      //throw ndlexceptions::FileWriteError(fileName);
+      noexcept(false);
     mxArray* matlabArray = toMxArray();
     matPutVariable(matFile, variableName.c_str(), matlabArray);
     mxDestroyArray(matlabArray);
     if(matClose(matFile) !=0 )
-      throw ndlexceptions::FileWriteError(fileName);
+      //throw ndlexceptions::FileWriteError(fileName);
+
+      noexcept(false);
   }
   
-  void writeMatlabFile(const string fileName, const string variableName) const throw(ndlexceptions::FileWriteError&)
+  void writeMatlabFile(const string fileName, const string variableName) const //throw(ndlexceptions::FileWriteError&)
   {
     MATFile* matFile = matOpen(fileName.c_str(), "w");
     if(matFile==NULL)
-      throw ndlexceptions::FileWriteError(fileName);
+
+      noexcept(false);
+      //throw ndlexceptions::FileWriteError(fileName);
     mxArray* matlabArray = toMxArray();
     matPutVariable(matFile, variableName.c_str(), matlabArray);
     mxDestroyArray(matlabArray);
     if(matClose(matFile) !=0 )
-      throw ndlexceptions::FileWriteError(fileName);
+      //throw ndlexceptions::FileWriteError(fileName);
+
+      noexcept(false);
   }
   mxArray* convertMxArray(const bool val) const
   {
@@ -293,7 +331,7 @@ class CMatInterface
     }
       return matlabArray;
   }
-  int mxArrayToInt(const mxArray* matlabArray) const throw(ndlexceptions::NotImplementedError&)
+  int mxArrayToInt(const mxArray* matlabArray) const //throw(ndlexceptions::NotImplementedError&)
   {
     int val = 0;
     mxClassID classID = mxGetClassID(matlabArray);
@@ -305,10 +343,12 @@ class CMatInterface
       val = (int)valD[0];
     }
     else
-      throw ndlexceptions::NotImplementedError("Conversion of this type to int not yet supported.");
+      //throw ndlexceptions::NotImplementedError("Conversion of this type to int not yet supported.");
+
+      noexcept(false);
     return val;
   }
-  double mxArrayToDouble(const mxArray* matlabArray) const throw(ndlexceptions::NotImplementedError&)
+  double mxArrayToDouble(const mxArray* matlabArray) const //throw(ndlexceptions::NotImplementedError&)
   {
     double val = 0;
     mxClassID classID = mxGetClassID(matlabArray);
@@ -320,6 +360,7 @@ class CMatInterface
       val = valD[0];
     }
     else
+
       throw ndlexceptions::NotImplementedError("Conversion of this type to double not yet supported.");
     return val;
   }
