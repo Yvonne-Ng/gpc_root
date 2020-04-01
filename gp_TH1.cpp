@@ -10,11 +10,10 @@ gp_TH1::gp_TH1(gp_config* config)
 
 }
   
-void gp_TH1::readFromTH1(TH1D *&hist){
+void gp_TH1::readFromTH1(TH1D *&hist, double minX, double maxX){
 
   int maxFeat=1;  //only need 1d gaussian process right now
   int numData = hist->GetNbinsX();
-  cout<<"got here"<<endl;
 
   X.resize(numData, maxFeat);
   X.zeros();
@@ -22,8 +21,26 @@ void gp_TH1::readFromTH1(TH1D *&hist){
   y.zeros();
   cout<<"number of bins:"<<hist->GetNbinsX()<<endl;
 
-  for (int i =0; i< hist->GetNbinsX(); i++){
-    cout<<"got here"<<endl;
+  int minBin;
+  int maxBin;
+
+  if (minX==0 and maxX==0){
+    minBin=0; 
+    maxBin=hist->GetNbinsX();
+  }
+  else{
+    minBin=hist->FindBin(minX);
+    maxBin=hist->FindBin(maxX);
+  }
+  input_minX=minBin;
+  input_maxX=maxBin;
+  cout<<"minX"<<minX<<endl;
+  cout<<"minBin"<<minBin<<endl;
+
+  cout<<"maxX"<<maxX<<endl;
+  cout<<"maxBin"<<maxBin<<endl;
+
+  for (int i =minBin; i<maxBin; i++){
     X.setVal(hist->GetBinCenter(i), i, 0);
 	y.setVal(hist->GetBinContent(i),i);
     cout<<"pt :"<<i <<endl;
@@ -275,7 +292,7 @@ void gp_TH1::learn(string comment){
 }
   
 
-void gp_TH1::fitAndOutput(){
+TH1D* gp_TH1::fitAndOutput(bool output_dat){
 
   // writing the prediction to a TH1
   //
@@ -298,20 +315,13 @@ void gp_TH1::fitAndOutput(){
   //writing the input x y to the model
   //
   //
-  cout<<"got here 1"<<endl;
 
 
   //Seems like I will need this
-  cout<<"kernel type: "<<typeid(pmodel->getKernel()).name()<<endl;
-
-  //cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
-
-  cout<<"type of pkern: "<<typeid(*pmodel->getKernel()).name()<<endl;
   pmodel->py=&y;
   pmodel->updateM();
   pmodel->pX=&X;
 
-  cout<<"got here 2"<<endl;
   //checking for invalid combination of input
   if(pmodel->getNoiseType()!="gaussian" && pmodel->getInputDim()!=2) {
     exitError("Incorrect number of model inputs.");
@@ -325,7 +335,6 @@ void gp_TH1::fitAndOutput(){
   }
 
 
-  cout<<"got here 3"<<endl;
   //if pmodel noise type is gaussian 
   if(pmodel->getNoiseType()=="gaussian") {
     switch(pmodel->getApproximationType())
@@ -338,7 +347,6 @@ void gp_TH1::fitAndOutput(){
       CMatrix scatterOut(pmodel->X_u.getRows(), pmodel->getOutputDim());     
       pmodel->out(scatterOut, pmodel->X_u);
 
-      cout<<"got here 4"<<endl;
       for(int i=0; i<pmodel->X_u.getRows(); i++) 
       {
         for(int j=0; j<pmodel->X_u.getCols(); j++)
@@ -359,32 +367,29 @@ void gp_TH1::fitAndOutput(){
       scatterData.setVal(y.getVal(i, 0), i, X.getCols());
     }
 
-      cout<<"got here 6"<<endl;
     scatterData.toUnheadedFile(name+"_scatter_data.dat");
-    CMatrix minVals(1, X.getCols());
-    CMatrix maxVals(1, X.getCols());
-    X.maxRow(maxVals);
-    X.minRow(minVals);
 
-      cout<<"got here 7"<<endl;
 	 
-    cout<<"number of x dimensions"<<pmodel->X_u.getCols()<<endl;
     if(pmodel->X_u.getCols()==1) // one dimensional input.
     {
       double outLap=0.25;
       //Change this resolution to = to maxX-minX /totalx
       //int numx=resolution;
-      int numx=X.getRows();
+      //int numx=X.getRows();
+      int numx=input_maxX-input_minX+1;
+
+
+      CMatrix minVals(1, X.getCols());
+      CMatrix maxVals(1, X.getCols());
+      X.maxRow(maxVals);
+      X.minRow(minVals);
+      
 
       double xspan=maxVals.getVal(0, 0)-minVals.getVal(0, 0);
 
       maxVals.setVal(maxVals.getVal(0, 0)+outLap*xspan, 0, 0);
       minVals.setVal(minVals.getVal(0, 0)-outLap*xspan, 0, 0);
       xspan=maxVals.getVal(0, 0)-minVals.getVal(0, 0);
-      cout<<"max Val: "<<maxVals.getVal(0,0)<<endl;
-      cout<<"min Val: "<<minVals.getVal(0,0)<<endl;
-      cout<<"x min val: "<<X.getVal(0, 0)<<endl;
-      cout<<"x max val: "<<X.getVal(0, X.getCols()-1)<<endl;
 
       double xdiff=xspan/(numx-1);
       CMatrix Xinvals(numx, 1);
@@ -392,16 +397,25 @@ void gp_TH1::fitAndOutput(){
       CMatrix errorBarPlus(numx, 2);
       CMatrix errorBarMinus(numx, 2);
 
-      cout<<"got here 8"<<endl;
       double x;
       int j;
-      for (j=0; j< numx;j++){
+      double xbins[numx];
+      cout<<"input_minX: "<<input_minX<<endl;
+      cout<<"input_maxX: "<<input_maxX<<endl;
+      cout<<"X: "<<X<<endl;
+      int i;
+      for (j=input_minX; j< input_maxX-1;j++){
+          i=j-input_minX;
+          
+          xbins[i]=X.getVal(j, 0);
 
-          Xinvals.setVal(X.getVal(j, 0), j, 0);
-          regressOut.setVal(X.getVal(j, 0), j, 0);
-          errorBarPlus.setVal(X.getVal(j, 0), j, 0);
-          errorBarMinus.setVal(X.getVal(j, 0), j, 0);
+          Xinvals.setVal(X.getVal(j, 0), i, 0);
+          regressOut.setVal(X.getVal(j, 0), i, 0);
+          errorBarPlus.setVal(X.getVal(j, 0), i, 0);
+          errorBarMinus.setVal(X.getVal(j, 0), i, 0);
       }
+
+      TH1D* output_hist=new TH1D("gp_prediction", "gp_prediction", numx, xbins);
       //for(j=0, x=minVals.getVal(0, 0); j<numx; x+=xdiff, j++) 
       //{
       //    Xinvals.setVal(x, j, 0);
@@ -410,7 +424,6 @@ void gp_TH1::fitAndOutput(){
       //    errorBarMinus.setVal(x, j, 0);
       //}
       
-      cout<<"got here 9"<<endl;
       CMatrix outVals(Xinvals.getRows(), pmodel->getOutputDim());
       CMatrix stdVals(Xinvals.getRows(), pmodel->getOutputDim());
       cout<<"xinvals row: "<<Xinvals.getRows()<<endl;
@@ -430,8 +443,11 @@ void gp_TH1::fitAndOutput(){
         regressOut.setVal(val, j, 1);
         errorBarPlus.setVal(val + 2*stdVals.getVal(j), j, 1);
         errorBarMinus.setVal(val - 2*stdVals.getVal(j), j, 1);
+        output_hist->SetBinContent(j, val);
+        output_hist->SetBinError(j, stdVals.getVal(j));
       }
 
+      if (output_dat){
       string lineFile = name + "_line_data.dat";
       regressOut.toUnheadedFile(lineFile);
       string errorFile = name + "_error_bar_data.dat";
@@ -445,26 +461,27 @@ void gp_TH1::fitAndOutput(){
       out << endl;
       errorBarMinus.toUnheadedStream(out);
 
-      cout<<"got here 13"<<endl;
       string plotFileName = name + "_plot.gp";
       ofstream outGnuplot(plotFileName.c_str());
       if(!outGnuplot) throw ndlexceptions::FileWriteError(plotFileName);
       outGnuplot << "plot \"" << name << "_line_data.dat\" with lines lw " << lineWidth;
       outGnuplot << ", \"" << name << "_scatter_data.dat\" with points ps " << pointSize;
 
-      cout<<"got here 13"<<endl;
       if(pmodel->isSparseApproximation())
       {
         outGnuplot << ", \"" << name << "_active_set.dat\" with points ps " << pointSize;
       }
 
-      cout<<"got here 13"<<endl;
       outGnuplot << ", \"" << name << "_error_bar_data.dat\" with lines lw " << lineWidth << endl;
       outGnuplot << "pause -1";
       outGnuplot.close();
-    }      
+
+    }// if output_dat
+
+    return output_hist;
+    }// if 1d data
     
-  }
+  }//if noise type==gaussian
   else 
   {
     exitError("Unknown noise model for gnuplot output.");
@@ -475,7 +492,3 @@ void gp_TH1::printXY(){
   cout<<"X: "<<X<<endl;
   cout<<"Y: "<<y<<endl;
 }
-  
-
-
-

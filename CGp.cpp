@@ -455,14 +455,9 @@ void CGp::out(CMatrix& yPred, const CMatrix& Xin) const
 void CGp::out(CMatrix& yPred, CMatrix& probPred, const CMatrix& Xin) const
 {
 
-  cout<<"out got here 1"<<endl;
   CMatrix muTest(yPred.getRows(), yPred.getCols());
 
-
-  cout<<"out got here 2"<<endl;
   CMatrix varSigmaTest(yPred.getRows(), yPred.getCols());
-
-  cout<<"out got here 3"<<endl;
 
   cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
   cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
@@ -645,6 +640,8 @@ void CGp::_posteriorVar(CMatrix& varSigma, CMatrix& kX, const CMatrix& Xin) cons
     for(unsigned int i=0; i<kX.getCols(); i++)
     {
       double vsVal = pkern->diagComputeElement(Xin, i) - kX.dotColCol(i, store, i);
+      cout<<"vsVal: "<<vsVal;
+
       CHECKZEROORPOSITIVE(vsVal>=0);
       vsVal += 1.0/getBetaVal();
       for(unsigned int j=0; j<getOutputDim(); j++)
@@ -660,7 +657,10 @@ void CGp::_posteriorVar(CMatrix& varSigma, CMatrix& kX, const CMatrix& Xin) cons
     for(unsigned int i=0; i<kX.getCols(); i++)
     {
       double vsVal = pkern->diagComputeElement(Xin, i) - kX.norm2Col(i);
-      CHECKZEROORPOSITIVE(vsVal>=0);
+
+      cout<<"vsVal: "<<vsVal;
+      //TODO: remove comment in the following line
+      //CHECKZEROORPOSITIVE(vsVal>=0);
       for(unsigned int j=0; j<getOutputDim(); j++)
       {
         varSigma.setVal(vsVal, i, j);
@@ -698,13 +698,11 @@ void CGp::posteriorMean(CMatrix& mu, const CMatrix& Xin) const
 void CGp::posteriorMeanVar(CMatrix& mu, CMatrix& varSigma, const CMatrix& Xin) const
 {
   
-  cout<<"out posterior got here 0"<<endl;
   DIMENSIONMATCH(mu.getCols()==getOutputDim());
   DIMENSIONMATCH(varSigma.getCols()==getOutputDim());
   DIMENSIONMATCH(mu.getRows()==Xin.getRows());
   DIMENSIONMATCH(varSigma.getRows()==Xin.getRows());
 
-  cout<<"out posterior got here 1"<<endl;
   
   int alRows = 0;
   if(isSparseApproximation())
@@ -715,21 +713,12 @@ void CGp::posteriorMeanVar(CMatrix& mu, CMatrix& varSigma, const CMatrix& Xin) c
   { 
     alRows = getNumData();
   }
-  cout<<"out posterior got here 2"<<endl;
   CMatrix kX(alRows, Xin.getRows());
 
-  cout<<"out posterior got here 2.5"<<endl;
-
-  cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
-  cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
-
-  cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
   _testComputeKx(kX, Xin);
 
-  cout<<"out posterior got here 3"<<endl;
   _posteriorMean(mu, kX);
 
-  cout<<"out posterior got here 4"<<endl;
   _posteriorVar(varSigma, kX, Xin); // destroys kX through in place operations.
 
   cout<<"out posterior got here 5"<<endl;

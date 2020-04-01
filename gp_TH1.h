@@ -31,6 +31,8 @@ class gp_TH1{
   int approxType;
 
   int activeSetSize;
+  int input_minX;
+  int input_maxX;
 // TODO, make these private and create a set function for them
   CMatrix X;
   CMatrix y;
@@ -38,13 +40,13 @@ class gp_TH1{
   gp_TH1(gp_config* config);
 
 
-  void readFromTH1(TH1D*&hist);
+  void readFromTH1(TH1D*&hist, double minX=0, double maxX=0);
 
 
   void writeGpToFile(const CGp& model, const string modelFileName, const string comment);
   void learn(string comment);
-  void fitAndOutput();
-  TH1D* fitAndOutputTH1();
+  TH1D* fitAndOutput(bool output_dat=false);
+  //TH1D* fitAndOutputTH1();
   void relearn();
   void printXY();
 
