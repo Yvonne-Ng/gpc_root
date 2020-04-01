@@ -354,7 +354,7 @@ void gp_TH1::fitAndOutput(){
     {
       for(int j=0; j<X.getCols(); j++)
       {
-	scatterData.setVal(X.getVal(i, j), i, j);
+      scatterData.setVal(X.getVal(i, j), i, j);
       }
       scatterData.setVal(y.getVal(i, 0), i, X.getCols());
     }
@@ -372,12 +372,20 @@ void gp_TH1::fitAndOutput(){
     if(pmodel->X_u.getCols()==1) // one dimensional input.
     {
       double outLap=0.25;
-      int numx=resolution;
+      //Change this resolution to = to maxX-minX /totalx
+      //int numx=resolution;
+      int numx=X.getRows();
+
       double xspan=maxVals.getVal(0, 0)-minVals.getVal(0, 0);
 
       maxVals.setVal(maxVals.getVal(0, 0)+outLap*xspan, 0, 0);
       minVals.setVal(minVals.getVal(0, 0)-outLap*xspan, 0, 0);
       xspan=maxVals.getVal(0, 0)-minVals.getVal(0, 0);
+      cout<<"max Val: "<<maxVals.getVal(0,0)<<endl;
+      cout<<"min Val: "<<minVals.getVal(0,0)<<endl;
+      cout<<"x min val: "<<X.getVal(0, 0)<<endl;
+      cout<<"x max val: "<<X.getVal(0, X.getCols()-1)<<endl;
+
       double xdiff=xspan/(numx-1);
       CMatrix Xinvals(numx, 1);
       CMatrix regressOut(numx, 2);
@@ -387,42 +395,48 @@ void gp_TH1::fitAndOutput(){
       cout<<"got here 8"<<endl;
       double x;
       int j;
-      for(j=0, x=minVals.getVal(0, 0); j<numx; x+=xdiff, j++) 
-      {
-          Xinvals.setVal(x, j, 0);
-          regressOut.setVal(x, j, 0);
-          errorBarPlus.setVal(x, j, 0);
-          errorBarMinus.setVal(x, j, 0);
+      for (j=0; j< numx;j++){
+
+          Xinvals.setVal(X.getVal(j, 0), j, 0);
+          regressOut.setVal(X.getVal(j, 0), j, 0);
+          errorBarPlus.setVal(X.getVal(j, 0), j, 0);
+          errorBarMinus.setVal(X.getVal(j, 0), j, 0);
       }
+      //for(j=0, x=minVals.getVal(0, 0); j<numx; x+=xdiff, j++) 
+      //{
+      //    Xinvals.setVal(x, j, 0);
+      //    regressOut.setVal(x, j, 0);
+      //    errorBarPlus.setVal(x, j, 0);
+      //    errorBarMinus.setVal(x, j, 0);
+      //}
       
       cout<<"got here 9"<<endl;
       CMatrix outVals(Xinvals.getRows(), pmodel->getOutputDim());
       CMatrix stdVals(Xinvals.getRows(), pmodel->getOutputDim());
+      cout<<"xinvals row: "<<Xinvals.getRows()<<endl;
 
-      cout<<"got here 9.5"<<endl;
+      cout<<"output dimension: "<< pmodel->getOutputDim()<<endl;
+      cout<<"input X dimension row: "<<X.getRows()<<endl;
+      cout<<"input X dimension column: "<<X.getCols()<<endl;
+      cout<<"input y dimension rows: "<<y.getRows()<<endl;
+      cout<<"input y dimension column: "<<y.getCols()<<endl;
 
-     cout<<"kernel type got here 9.5: "<<typeid(pmodel->getKernel()).name()<<endl;
-     //cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
 
-      cout<<"type of pkern: "<<typeid(*pmodel->getKernel()).name()<<endl;
 
       pmodel->out(outVals, stdVals, Xinvals);
 
-      cout<<"got here 10"<<endl;
       for(int j=0; j<numx; j++) {
-	double val = outVals.getVal(j);
-	regressOut.setVal(val, j, 1);
-	errorBarPlus.setVal(val + 2*stdVals.getVal(j), j, 1);
-	errorBarMinus.setVal(val - 2*stdVals.getVal(j), j, 1);
+        double val = outVals.getVal(j);
+        regressOut.setVal(val, j, 1);
+        errorBarPlus.setVal(val + 2*stdVals.getVal(j), j, 1);
+        errorBarMinus.setVal(val - 2*stdVals.getVal(j), j, 1);
       }
 
-      cout<<"got here 11"<<endl;
       string lineFile = name + "_line_data.dat";
       regressOut.toUnheadedFile(lineFile);
       string errorFile = name + "_error_bar_data.dat";
       ofstream out(errorFile.c_str());
 
-      cout<<"got here 12"<<endl;
       if(!out) throw ndlexceptions::FileWriteError(errorFile);
       out << setiosflags(ios::scientific);
       out << setprecision(17);
