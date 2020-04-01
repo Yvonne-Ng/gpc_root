@@ -1,3 +1,4 @@
+
 atlas_subdir( GPC )
 
 # As a Fortran compiler may not have been set up yet when this file is included.
@@ -34,8 +35,9 @@ atlas_add_library(ndlassert ndlassert.cpp ndlassert.h ndlexceptions.h
 #===============
 
 #===ndlfortran===
-atlas_add_library(ndlfortran ndlfortran.f)
-SET_TARGET_PROPERTIES(ndlfortran PROPERTIES LINKER_LANGUAGE FORTRAN)
+atlas_add_library(ndlfortranlib ndlfortran.f
+    PUBLIC_HEADERS GPC )
+#SET_TARGET_PROPERTIES(ndlfortran PROPERTIES LINKER_LANGUAGE FORTRAN)
 #=================
 
 #===ndlstrutil
@@ -43,29 +45,29 @@ atlas_add_library(ndlstrutil ndlstrutil.cpp ndlstrutil.h ndlexceptions.h)
 #=================
 
 #===ndlutil===
-atlas_add_library(ndlutil ndlutil.cpp ndlutil.h ndlassert.h ndlexceptions.h ndlfortran.h)
+atlas_add_library(ndlutil ndlutil.cpp ndlutil.h ndlassert.h ndlexceptions.h ndlfortran.h ndlfortranlib )
 #=================
 
 #===CIvm===
-atlas_add_library(CIvm CIvm.cpp CIvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h)
+atlas_add_library(CIvm CIvm.cpp CIvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h ndlfortranlib )
 #=================
 
 #=====CGP======
-atlas_add_library(CGp CGp.cpp CGp.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h)
+atlas_add_library(CGp CGp.cpp CGp.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h ndlfortranlib )
 #=================
 
 #=====CMatrix======
-atlas_add_library(CMatrix CMatrix.cpp CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h)
+atlas_add_library(CMatrix CMatrix.cpp CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h ndlfortranlib)
 #=================
 
 
 #=====CDist======
-atlas_add_library(CDist CDist.cpp CDist.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CTransform.h)
+atlas_add_library(CDist CDist.cpp CDist.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CTransform.h ndlfortranlib )
 #=================
 
 
 #=====COptimisable===
-atlas_add_library(COptimisable COptimisable.cpp COptimisable.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h)
+atlas_add_library(COptimisable COptimisable.cpp COptimisable.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h ndlfortranlib )
 #=================
 
 #=====CTransform-===
