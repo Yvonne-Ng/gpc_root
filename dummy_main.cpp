@@ -15,8 +15,11 @@ int main(int argc, char* argv[])
 {
 
   gp_config * config = new gp_config();
+  config->setkernel("rbf");
+  //config->setkernel("white");
 //TH1D* h1 = new TH1D("h1", "h1", 10, 0, 10);
   gp_TH1 * GP_TH1 = new gp_TH1(config);
+
   config->modelFileName="test.model";
 
   // -- first test config works, hello world
@@ -48,6 +51,7 @@ int main(int argc, char* argv[])
   }
   TCanvas *c0= new TCanvas();
   //c0->cd();
+  //
   hist->Draw();
   c0->SaveAs("histogram.pdf");
 
@@ -57,7 +61,7 @@ int main(int argc, char* argv[])
   GP_TH1->learn("testlalala");
   GP_TH1->kern.writeParamsToStream(cout);
 
-  TH1D* h1 = GP_TH1->fitAndOutput();
+  TH1D* h1 = GP_TH1->fitAndOutput(true);
 
   TFile * output_file =new TFile("output.root", "recreate");
   output_file->cd();
@@ -66,8 +70,10 @@ int main(int argc, char* argv[])
   TCanvas *c1 = new TCanvas();
 
   c1->cd();
+  c1->SetLogy();
   hist->Draw();
-  h1->Draw("same");
+  h1->Draw("SAME");
+
   c1->SaveAs("gp_prediction.pdf");
   hist->Write();
   h1->Write();

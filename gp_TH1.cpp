@@ -19,7 +19,6 @@ void gp_TH1::readFromTH1(TH1D *&hist, double minX, double maxX){
   X.zeros();
   y.resize(numData, 1);
   y.zeros();
-  cout<<"number of bins:"<<hist->GetNbinsX()<<endl;
 
   int minBin;
   int maxBin;
@@ -34,18 +33,10 @@ void gp_TH1::readFromTH1(TH1D *&hist, double minX, double maxX){
   }
   input_minX=minBin;
   input_maxX=maxBin;
-  cout<<"minX"<<minX<<endl;
-  cout<<"minBin"<<minBin<<endl;
-
-  cout<<"maxX"<<maxX<<endl;
-  cout<<"maxBin"<<maxBin<<endl;
 
   for (int i =minBin; i<maxBin; i++){
     X.setVal(hist->GetBinCenter(i), i, 0);
 	y.setVal(hist->GetBinContent(i),i);
-    cout<<"pt :"<<i <<endl;
-    cout<<"X : "<< hist->GetBinCenter(i)<<endl;
-    cout<<"Y : "<< hist->GetBinContent(i)<<endl;
 
   }
 
@@ -80,6 +71,12 @@ void gp_TH1::learn(string comment){
 
   
   vector<string> kernelTypes=Config->kernelTypes;
+  cout<<"print all kernels"<<endl;
+  for (auto kernel : kernelTypes){
+    cout<<"kernel"<<kernel;
+
+  }
+
   vector<unsigned int> kernelUsageFlag= Config->kernelUsageFlag;
   vector<double> ratQuadAlphas= Config->ratQuadAlphas;
   vector<double> rbfInvWidths= Config->rbfInvWidths;
@@ -197,6 +194,12 @@ void gp_TH1::learn(string comment){
     else {
       exitError("Unknown covariance function type: " + kernelTypes[i]);
     }
+
+    for (auto k :kernels){
+      cout<<"kernels from kernels vector"<<endl;
+      cout<<k<<endl;
+    }
+
     switch (kernelUsageFlag[i]) {
     case KERNEL_USAGE_FWD:
       kern.addKern(kernels[i]);
@@ -416,13 +419,6 @@ TH1D* gp_TH1::fitAndOutput(bool output_dat){
       }
 
       TH1D* output_hist=new TH1D("gp_prediction", "gp_prediction", numx, xbins);
-      //for(j=0, x=minVals.getVal(0, 0); j<numx; x+=xdiff, j++) 
-      //{
-      //    Xinvals.setVal(x, j, 0);
-      //    regressOut.setVal(x, j, 0);
-      //    errorBarPlus.setVal(x, j, 0);
-      //    errorBarMinus.setVal(x, j, 0);
-      //}
       
       CMatrix outVals(Xinvals.getRows(), pmodel->getOutputDim());
       CMatrix stdVals(Xinvals.getRows(), pmodel->getOutputDim());

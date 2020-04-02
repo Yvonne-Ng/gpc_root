@@ -59,7 +59,8 @@ class gp_config{
         kernelTypes.push_back(kernel); 
         kernelUsageFlag.push_back(KERNEL_USAGE_FWD);
         ratQuadAlphas.push_back(-1.0);
-		rbfInvWidths.push_back(-1.0);
+		//rbfInvWidths.push_back(-1.0);
+		rbfInvWidths.push_back(5);
         weightVariances.push_back(-1.0);
         biasVariances.push_back(-1.0);
         variances.push_back(-1.0);

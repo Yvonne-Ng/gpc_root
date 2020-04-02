@@ -27,69 +27,69 @@ LINK_LIBRARIES  ${ROOT_LIBRARIES} ${BOOST_LIBRARIES} CClctrl CGp CMatrix ndlfort
 # linking gp with its dependence
 #======
 
-#===ndlassert==
-# adding a library ndlassert
-atlas_add_library(ndlassert ndlassert.cpp ndlassert.h ndlexceptions.h
-    PUBLIC_HEADER GPc)
-# no linking of libs required
-#===============
 
 #===ndlfortran===
-atlas_add_library(ndlfortranlib ndlfortran.f
-    PUBLIC_HEADERS GPC )
+atlas_add_library( ndlfortranlib ndlfortran.f )
 #SET_TARGET_PROPERTIES(ndlfortran PROPERTIES LINKER_LANGUAGE FORTRAN)
-#=================
 
-#===ndlstrutil
-atlas_add_library(ndlstrutil ndlstrutil.cpp ndlstrutil.h ndlexceptions.h)
-#=================
+##===ndlassert==
+## adding a library ndlassert
+#atlas_add_library(ndlassert ndlassert.cpp ndlassert.h ndlexceptions.h
+#    PUBLIC_HEADER GPc)
+## no linking of libs required
+##===============
+##=================
 
-#===ndlutil===
-atlas_add_library(ndlutil ndlutil.cpp ndlutil.h ndlassert.h ndlexceptions.h ndlfortran.h ndlfortranlib )
-#=================
-
-#===CIvm===
-atlas_add_library(CIvm CIvm.cpp CIvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h ndlfortranlib )
-#=================
-
-#=====CGP======
-atlas_add_library(CGp CGp.cpp CGp.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h ndlfortranlib )
-#=================
-
-#=====CMatrix======
-atlas_add_library(CMatrix CMatrix.cpp CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h ndlfortranlib)
-#=================
-
-
-#=====CDist======
-atlas_add_library(CDist CDist.cpp CDist.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CTransform.h ndlfortranlib )
-#=================
-
-
-#=====COptimisable===
-atlas_add_library(COptimisable COptimisable.cpp COptimisable.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h ndlfortranlib )
-#=================
-
-#=====CTransform-===
-atlas_add_library(CTransform CTransform.cpp CTransform.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h)
-#=================
-
-
-#=====CKern-===
-atlas_add_library(CKern CKern.cpp CKern.h ndlassert.h ndlexceptions.h CTransform.h CMatrix.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CDataModel.h CDist.h)
-#=================
-
-
-#=====CNoise-===
-atlas_add_library(CNoise CNoise.cpp CNoise.h ndlexceptions.h ndlutil.h ndlassert.h ndlfortran.h ndlstrutil.h CMatrix.h CNdlInterfaces.h lapack.h
-  CTransform.h COptimisable.h CDist.h CKern.h CDataModel.h)
-#=================
-
-
-atlas_add_library(CClctrl CClctrl.cpp CClctrl.h ndlstrutil.h ndlexceptions.h ndlutil.h ndlassert.h ndlfortran.h CMatrix.h CNdlInterfaces.h lapack.h)
-
-atlas_add_library(CGplvm CGplvm.cpp CGplvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h)
-
-#====
-#suspect CClgplvm is not being used, skipping
-# skipping test that uses matlab
+##===ndlstrutil
+#atlas_add_library(ndlstrutil ndlstrutil.cpp ndlstrutil.h ndlexceptions.h )
+##=================
+#
+##===ndlutil===
+#atlas_add_library(ndlutil ndlutil.cpp ndlutil.h ndlassert.h ndlexceptions.h ndlfortran.h ndlfortranlib )
+##=================
+#
+##===CIvm===
+#atlas_add_library(CIvm CIvm.cpp CIvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h ndlfortranlib )
+##=================
+#
+##=====CGP======
+#atlas_add_library(CGp CGp.cpp CGp.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h ndlfortranlib )
+##=================
+#
+##=====CMatrix======
+#atlas_add_library(CMatrix CMatrix.cpp CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h ndlfortranlib)
+##=================
+#
+#
+##=====CDist======
+#atlas_add_library(CDist CDist.cpp CDist.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CTransform.h ndlfortranlib )
+##=================
+#
+#
+##=====COptimisable===
+#atlas_add_library(COptimisable COptimisable.cpp COptimisable.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h ndlfortranlib )
+##=================
+#
+##=====CTransform-===
+#atlas_add_library(CTransform CTransform.cpp CTransform.h CMatrix.h ndlassert.h ndlexceptions.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h)
+##=================
+#
+#
+##=====CKern-===
+#atlas_add_library(CKern CKern.cpp CKern.h ndlassert.h ndlexceptions.h CTransform.h CMatrix.h CNdlInterfaces.h ndlstrutil.h ndlutil.h ndlfortran.h lapack.h CDataModel.h CDist.h)
+##=================
+#
+#
+##=====CNoise-===
+#atlas_add_library(CNoise CNoise.cpp CNoise.h ndlexceptions.h ndlutil.h ndlassert.h ndlfortran.h ndlstrutil.h CMatrix.h CNdlInterfaces.h lapack.h
+#  CTransform.h COptimisable.h CDist.h CKern.h CDataModel.h)
+##=================
+#
+#
+#atlas_add_library(CClctrl CClctrl.cpp CClctrl.h ndlstrutil.h ndlexceptions.h ndlutil.h ndlassert.h ndlfortran.h CMatrix.h CNdlInterfaces.h lapack.h)
+#
+#atlas_add_library(CGplvm CGplvm.cpp CGplvm.h CMltools.h ndlassert.h ndlexceptions.h ndlstrutil.h COptimisable.h CMatrix.h CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h CDataModel.h CDist.h CNoise.h)
+#
+##====
+##suspect CClgplvm is not being used, skipping
+## skipping test that uses matlab

@@ -393,9 +393,7 @@ void CClgp::learn()
 
   pmodel = new CGp(&kern, &noise, &X, approxType, activeSetSize, getVerbosity());
 
-  cout<<"at initialization: "<<typeid(pmodel->getKernel()).name()<<endl;
 
-  cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
   if(optimiser=="scg")
     pmodel->setDefaultOptimiser(CGp::SCG);
   else if(optimiser=="conjgrad")
@@ -625,7 +623,6 @@ void CClgp::gnuplot()
   CGp* pmodel=readGpFromFile(modelFileName, getVerbosity());
   cout<<"kernel type: "<<typeid(pmodel->getKernel()).name()<<endl;
 
-  cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
   pmodel->py=&y;
   pmodel->updateM();
   pmodel->pX=&X;
