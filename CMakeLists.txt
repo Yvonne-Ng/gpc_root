@@ -1,25 +1,25 @@
 
 atlas_subdir( GPC )
 
-# As a Fortran compiler may not have been set up yet when this file is included.
-if( ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" ) OR
-    ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" ) )
-   _add_flag( CMAKE_Fortran_FLAGS "-ffixed-line-length-132" )
-   _add_flag( CMAKE_Fortran_FLAGS "-DFVOIDP=INTEGER*${CMAKE_SIZEOF_VOID_P}" )
-   _add_flag( CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops" )
-   _add_flag( CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-funroll-all-loops" )
-endif()
-
+## As a Fortran compiler may not have been set up yet when this file is included.
+#if( ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" ) OR
+#    ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" ) )
+#   _add_flag( CMAKE_Fortran_FLAGS "-ffixed-line-length-132" )
+#   _add_flag( CMAKE_Fortran_FLAGS "-DFVOIDP=INTEGER*${CMAKE_SIZEOF_VOID_P}" )
+#   _add_flag( CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops" )
+#   _add_flag( CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-funroll-all-loops" )
+#endif()
+#
 # no include directory
 #include_directories(${CMAKE_SOURCE_DIR}/stuff/include) # -I flags for compiler
 find_package( ROOT COMPONENTS Tree Hist Gpad )
 
 #===gp====
 # adding gp.cpp as an executable
-atlas_add_executable( gp gp.cpp gp.h
-INCLUDE_DIRS ${ROOT_INCLUDE_DIRS} ${BOOST_INCLUDE_DIRS}
-LINK_LIBRARIES  ${ROOT_LIBRARIES} ${BOOST_LIBRARIES} CClctrl CGp CMatrix ndlfortran CNoise ndlutil ndlstrutil CTransform COptimisable CKern CDist ndlassert )
-#target_link_library( gp CClctrl CGp CMatrix ndlfortran CNoise ndlutil ndlstrutil CTransform COptimisable CKern CDist ndlassert )
+#atlas_add_executable( gp gp.cpp gp.h
+#INCLUDE_DIRS ${ROOT_INCLUDE_DIRS} ${BOOST_INCLUDE_DIRS}
+#LINK_LIBRARIES  ${ROOT_LIBRARIES} ${BOOST_LIBRARIES} CClctrl CGp CMatrix ndlfortran CNoise ndlutil ndlstrutil CTransform COptimisable CKern CDist ndlassert )
+##target_link_library( gp CClctrl CGp CMatrix ndlfortran CNoise ndlutil ndlstrutil CTransform COptimisable CKern CDist ndlassert )
 #gp.o: gp.cpp gp.h ndlexceptions.h ndlstrutil.h CMatrix.h ndlassert.h \
 #  CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h \
 #  CDataModel.h CDist.h CGp.h CMltools.h COptimisable.h CNoise.h CClctrl.h
