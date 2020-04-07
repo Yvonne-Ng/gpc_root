@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   //
   // -- second test:  open root file and check the X and y matrix
 
-TFile * f1 = TFile::Open("/afs/cern.ch/work/y/ywng/workspace/dimuon/gpc/python/landau_histogram.root");
+TFile * f1 = TFile::Open("examples/landau_histogram.root");
 //  TFile * f1 = TFile::Open("/eos/user/y/ywng/skimmed_output/output-2020-2-1-DL-OS/mc16a/zjets/tree_NoSys.root");
 
   //f1->ls();
