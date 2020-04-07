@@ -77,7 +77,7 @@ void gp_TH1::learn(string comment){
   //  cout<<"kernel"<<kernel;
 
   //}
-  cout<<"got here "<<endl;
+  //cout<<"got here "<<endl;
 
   vector<unsigned int> kernelUsageFlag= Config->kernelUsageFlag;
   vector<double> ratQuadAlphas= Config->ratQuadAlphas;
@@ -100,11 +100,11 @@ void gp_TH1::learn(string comment){
   string modelFileName=Config->modelFileName;
 
 
-  cout<<"got here 0.5"<<endl;
+  //cout<<"got here 0.5"<<endl;
   int inputDim = X.getCols();    
 
 
-  cout<<"got here 0.7"<<endl;
+  //cout<<"got here 0.7"<<endl;
   //CCmpndKern kern(X);
   //cannot call constructor again
   //kern(X);
@@ -112,7 +112,7 @@ void gp_TH1::learn(string comment){
   //update X
   kern.updateX(X);
 
-  cout<<"got here 1"<<endl;
+  //cout<<"got here 1"<<endl;
   vector<CKern*> kernels;
   for(int i=0; i<kernelTypes.size(); i++) {
     CMatrix *M = 0;
@@ -199,7 +199,7 @@ void gp_TH1::learn(string comment){
       if(variances[i]!=-1.0)
         kernels[i]->setParam(variances[i], 0); // set variance parameter as specified.
 
-    cout<<"got here 2"<<endl;
+    //cout<<"got here 2"<<endl;
     }
     else {
       exitError("Unknown covariance function type: " + kernelTypes[i]);
@@ -210,7 +210,7 @@ void gp_TH1::learn(string comment){
     //  cout<<k<<endl;
     //}
 
-    cout<<"got here 3"<<endl;
+    //cout<<"got here 3"<<endl;
     switch (kernelUsageFlag[i]) {
     case KERNEL_USAGE_FWD:
       kern.addKern(kernels[i]);
@@ -255,7 +255,7 @@ void gp_TH1::learn(string comment){
       exitError("Unknown sparse approximation type: " + approxTypeStr + ".");
     }
 
-    cout<<"got here 4"<<endl;
+    //cout<<"got here 4"<<endl;
     if(activeSetSize==-1)
       exitError("You must choose an active set size (option -a) for the command learn.");
   }
@@ -272,7 +272,7 @@ void gp_TH1::learn(string comment){
   if(scaleData)
     scale.deepCopy(stdCol(y));
   
-    cout<<"got here 5"<<endl;
+    //cout<<"got here 5"<<endl;
   //replacing the function pmodel by the class pmodel
   //CGp* pmodel;
   CMatrix bK(1,1,0.0);
@@ -291,7 +291,7 @@ void gp_TH1::learn(string comment){
   else
     exitError("Unrecognised optimiser type: " + optimiser);
 
-    cout<<"got here 6"<<endl;
+    //cout<<"got here 6"<<endl;
     pmodel->setBetaVal(1); //
     pmodel->setScale(scale);
     pmodel->setBias(bias);
@@ -299,7 +299,7 @@ void gp_TH1::learn(string comment){
     pmodel->setOutputScaleLearnt(outputScaleLearnt);
     //writeGpToFile(*pmodel, "c:\\gp_model", "Write for testing of model");  
     //
-    cout<<"got here 7"<<endl;
+    //cout<<"got here 7"<<endl;
     pmodel->setVerbosity(3);
 
     //pmodel->optimise(iters);

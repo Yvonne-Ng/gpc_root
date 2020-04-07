@@ -81,7 +81,7 @@ TFile * f1 = TFile::Open("examples/landau_histogram.root");
 
 
   cout<<"after learn : "<<endl;
-  //GP_TH1->pmodel->pkern->display(cout);
+  GP_TH1->pmodel->pkern->display(cout);
 
   TH1D* h1 = GP_TH1->fitAndOutput(true);
 

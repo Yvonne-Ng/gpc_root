@@ -475,17 +475,17 @@ void CGaussianNoise::test(const CMatrix& muout, const CMatrix& varSigmaOut, cons
 void CGaussianNoise::out(CMatrix& yPred, const CMatrix& muTest, const CMatrix& varSigmaTest) const
 {
 
-  cout<<"out noise got here 0"<<endl;
+  //cout<<"out noise got here 0"<<endl;
 
   DIMENSIONMATCH(yPred.dimensionsMatch(muTest));
 
-  cout<<"out noise got here 1"<<endl;
+  //cout<<"out noise got here 1"<<endl;
   DIMENSIONMATCH(muTest.dimensionsMatch(varSigmaTest));
 
-  cout<<"out noise got here 2"<<endl;
+  //cout<<"out noise got here 2"<<endl;
   yPred.deepCopy(muTest);
 
-  cout<<"out noise got here 3"<<endl;
+  //cout<<"out noise got here 3"<<endl;
   for(unsigned int j=0; j<getOutputDim(); j++)
     yPred.addCol(j,bias.getVal(j));
 }

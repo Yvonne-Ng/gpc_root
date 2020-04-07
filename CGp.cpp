@@ -459,13 +459,13 @@ void CGp::out(CMatrix& yPred, CMatrix& probPred, const CMatrix& Xin) const
 
   CMatrix varSigmaTest(yPred.getRows(), yPred.getCols());
 
-  cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
-  cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
+  //cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
+  //cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
 
-  cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
+  //cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
   posteriorMeanVar(muTest, varSigmaTest, Xin);
 
-  cout<<"out got here 4"<<endl;
+  //cout<<"out got here 4"<<endl;
   pnoise->out(yPred, probPred, muTest, varSigmaTest);
 }
 double CGp::outGradParams(CMatrix& g, const CMatrix &Xin, unsigned int pointNo, unsigned int outputNo) const
@@ -545,58 +545,58 @@ void CGp::updateAlpha() const
 void CGp::_testComputeKx(CMatrix &kX, const CMatrix& Xin) const
 {
 
-  cout<<"_testCompute got here 0"<<endl;
+  //cout<<"_testCompute got here 0"<<endl;
 
-  cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
-  cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
+ // cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
+  //cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
 
-  cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
+  //cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
   if(isSparseApproximation())
   {
 
-    cout<<"if _testCompute got here 1"<<endl;
+    //cout<<"if _testCompute got here 1"<<endl;
     DIMENSIONMATCH(kX.getRows()==X_u.getRows() && kX.getCols()==Xin.getRows());  
 
-    cout<<"if _testCompute got here 2"<<endl;
+    //cout<<"if _testCompute got here 2"<<endl;
     pkern->compute(kX, X_u, Xin);
 
-    cout<<"if _testCompute got here 3"<<endl;
+    //cout<<"if _testCompute got here 3"<<endl;
   }
   else
   {
 
     DIMENSIONMATCH(kX.getRows()==pX->getRows() && kX.getCols()==Xin.getRows());  
 
-    cout<<"_testCompute got here 2"<<endl;
+    //cout<<"_testCompute got here 2"<<endl;
 
-    cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
-    cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
+    //cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
+    //cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
 
-    cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
+    //cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
     //cout<<pkern->getType()<<endl;
     //pkern->setType("rbf");
     //cout<<pkern->getType()<<endl;
     cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
 
-    cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
-    cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
+    //cout<<"kerel out got here kern "<<typeid(pkern).name()<<endl;
+    //cout<<"kerel out got here get kern: "<<typeid(getKernel()).name()<<endl;
     //cout<<pkern->getClass()<<endl;
     pkern->compute(kX, *pX, Xin);
 
-    cout<<"_testCompute got here 3"<<endl;
+    //cout<<"_testCompute got here 3"<<endl;
   }
 }
 
 void CGp::_posteriorMean(CMatrix& mu, const CMatrix& kX) const
 {
 
-  cout<<"out posterior mean got here 0"<<endl;
+  //cout<<"out posterior mean got here 0"<<endl;
   updateAlpha();
 
   DIMENSIONMATCH(mu.getRows()==kX.getCols());
   DIMENSIONMATCH(mu.getCols()==getOutputDim());
 
-  cout<<"out posterior mean got here 1"<<endl;
+  //cout<<"out posterior mean got here 1"<<endl;
   for(unsigned int i=0; i<kX.getCols(); i++)
   {
     for(unsigned int j=0; j<getOutputDim(); j++)
@@ -605,7 +605,7 @@ void CGp::_posteriorMean(CMatrix& mu, const CMatrix& kX) const
     }
   }
 
-  cout<<"out posterior mean got here 2"<<endl;
+  //cout<<"out posterior mean got here 2"<<endl;
   // apply output scale and bias.
   for(unsigned int j=0; j<getOutputDim(); j++)
   {
@@ -621,7 +621,7 @@ void CGp::_posteriorMean(CMatrix& mu, const CMatrix& kX) const
     }
   }
 
-  cout<<"out posterior mean got here 3"<<endl;
+  //cout<<"out posterior mean got here 3"<<endl;
 }
 void CGp::_posteriorVar(CMatrix& varSigma, CMatrix& kX, const CMatrix& Xin) const
 {
@@ -640,7 +640,7 @@ void CGp::_posteriorVar(CMatrix& varSigma, CMatrix& kX, const CMatrix& Xin) cons
     for(unsigned int i=0; i<kX.getCols(); i++)
     {
       double vsVal = pkern->diagComputeElement(Xin, i) - kX.dotColCol(i, store, i);
-      cout<<"vsVal: "<<vsVal;
+      //cout<<"vsVal: "<<vsVal;
 
       CHECKZEROORPOSITIVE(vsVal>=0);
       vsVal += 1.0/getBetaVal();
@@ -658,7 +658,7 @@ void CGp::_posteriorVar(CMatrix& varSigma, CMatrix& kX, const CMatrix& Xin) cons
     {
       double vsVal = pkern->diagComputeElement(Xin, i) - kX.norm2Col(i);
 
-      cout<<"vsVal: "<<vsVal;
+      //cout<<"vsVal: "<<vsVal;
       //TODO: remove comment in the following line
       //CHECKZEROORPOSITIVE(vsVal>=0);
       for(unsigned int j=0; j<getOutputDim(); j++)
@@ -721,7 +721,7 @@ void CGp::posteriorMeanVar(CMatrix& mu, CMatrix& varSigma, const CMatrix& Xin) c
 
   _posteriorVar(varSigma, kX, Xin); // destroys kX through in place operations.
 
-  cout<<"out posterior got here 5"<<endl;
+  //cout<<"out posterior got here 5"<<endl;
   
 }
 
@@ -749,16 +749,16 @@ void CGp::updateK() const
   if(!isKupToDate())
   {
     
-    cout<<"update K : "<<endl;
+    //cout<<"update K : "<<endl;
     _updateK();
 
-    cout<<"update inv K : "<<endl;
+    //cout<<"update inv K : "<<endl;
     _updateInvK();
 
-    cout<<"update ADup: "<<endl;
+    //cout<<"update ADup: "<<endl;
     setADupToDate(false);
 
-    cout<<"update KDup: "<<endl;
+    //cout<<"update KDup: "<<endl;
     setKupToDate(true);
   }
 }
@@ -957,12 +957,12 @@ void CGp::updateAD() const {
 // update invK with the inverse of the kernel plus beta terms computed from the active points.
 void CGp::_updateInvK(unsigned int dim) const
 {
-  cout<<"update IK: "<<endl;
+  //cout<<"update IK: "<<endl;
   double jit = 0.0;
   switch(getApproximationType()) {
   case FTC:
 
-  cout<<"update IK: "<<endl;
+  //cout<<"update IK: "<<endl;
     jit = LcholK.jitChol(K); // this will initially be upper triangular.
     if(jit>1e-2)
       if(getVerbosity()>2)
@@ -970,16 +970,16 @@ void CGp::_updateInvK(unsigned int dim) const
 
     logDetK = logDet(LcholK);
 
-    cout<<"update IK 2: "<<endl;
+    //cout<<"update IK 2: "<<endl;
     invK.setSymmetric(true);
 
-    cout<<"update IK 3: "<<endl;
+    //cout<<"update IK 3: "<<endl;
     invK.pdinv(LcholK);
 
-    cout<<"update IK 4: "<<endl;
+    //cout<<"update IK 4: "<<endl;
     LcholK.trans();
 
-    cout<<"update IK 5: "<<endl;
+    //cout<<"update IK 5: "<<endl;
     break;
   case DTC:
   case DTCVAR:
@@ -1024,15 +1024,15 @@ double CGp::logLikelihood() const
         // This computes trace(invK*M*M'), column by column of M
         // invKm := invK * m(:,j)
         //
-          cout<<"got here 2.1 "<<endl;
+          //cout<<"got here 2.1 "<<endl;
           invKm.symvColCol(0, invK, m, j, 1.0, 0.0, "u");
           // L += invKm' * m(:,j)
           L += invKm.dotColCol(0, m, j);
 
-          cout<<"got here 2.2 "<<endl;
+          //cout<<"got here 2.2 "<<endl;
           L += logDetK; 
 
-          cout<<"got here 2.3 "<<endl;
+          //cout<<"got here 2.3 "<<endl;
       }
     }
     else 
@@ -1653,18 +1653,18 @@ void CGp::optimise(unsigned int iters)
     cout << "Initial model:" << endl;
     display(cout);
   }
-  cout<<"got here "<<endl;
+  //cout<<"got here "<<endl;
   if(getVerbosity()>2 && getOptNumParams()<40)
     checkGradients();
   
-  cout<<"got here -.5"<<endl;
+  //cout<<"got here -.5"<<endl;
   setMaxIters(iters);
 
 
-  cout<<"got here 1"<<endl;
+  //cout<<"got here 1"<<endl;
   runDefaultOptimiser();
 
-  cout<<"got here 2"<<endl;
+  //cout<<"got here 2"<<endl;
   
   if(getVerbosity()>1)
     cout << "... done. " << endl;
