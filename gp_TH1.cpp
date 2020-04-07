@@ -333,6 +333,28 @@ void gp_TH1::learn(string comment){
     cout<<"before optimise"<<endl;
     int trial_times=2;
 
+    auto LS2IW = [](double lengthS){
+        double inverseW=1/(lengthS*lengthS);
+        return inverseW;
+
+    };
+
+
+    double lower_LS=2;
+    double upper_LS=10;
+
+
+
+    cout<<"min: "<< min(LS2IW(lower_LS), LS2IW(upper_LS)) <<endl;
+    cout<<"max: "<<max(LS2IW(lower_LS), LS2IW(upper_LS))<<endl;
+    for(int i=0; i<kernelTypes.size(); i++) {
+      //TODO for all kerneltypes other than rbf too
+      if(kernelTypes[i]=="rbf") {
+        kernels[i]->setBound(0, min(LS2IW(lower_LS), LS2IW(upper_LS)), max(LS2IW(lower_LS), LS2IW(upper_LS)));
+        kernels[i]->setBound(1, 0.0001, 100);
+      }
+    }
+
 
     while (n<trial_times){
       try {
@@ -357,7 +379,6 @@ void gp_TH1::learn(string comment){
     cout<<"after optimise"<<endl;
     writeGpToFile(*pmodel, modelFileName, comment);
 
-    cout<<"got here 8"<<endl;
 
   //cout<<"at end of learn kernel type: "<<typeid(pmodel->getKernel()).name()<<endl;
 

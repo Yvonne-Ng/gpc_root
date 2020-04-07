@@ -39,6 +39,13 @@ class CKern : public CMatInterface, public CStreamInterface, public CTransformab
   CKern(const CMatrix& X) : updateXused(false) {}
   CKern(unsigned int inDim) : updateXused(false) {}
   CKern(const CKern& kern) : updateXused(false) {}
+
+  void setBound(int var, double lower, double upper){
+
+    //addTransform(CTransform::VariableBound(lower, upper), var);
+    addTransform(CTransform::defaultZeroOne(), var);
+
+  }
   
   virtual ~CKern()  {}
   virtual CKern* clone() const=0;
@@ -731,12 +738,17 @@ class CRbfKern: public CKern {
   double getGradParam(unsigned int index, const CMatrix& X, const CMatrix& X2, const CMatrix& cvGrd) const;
   double getGradParam(unsigned int index, const CMatrix& X, const CMatrix& cvGrd) const;
   void updateX(const CMatrix& X);
+  void setBound(int var, double lower, double upper);
 
  private:
-  void _init();
+  void _init(double lower_width=-100, double upper_width =100, double lower_var=-100, double upper_var=100);
   double variance;
   double inverseWidth;
   mutable CMatrix Xdists;
+  double upper_var;
+  double lower_var;
+  double upper_width;
+  double lower_width;
 
 };
 

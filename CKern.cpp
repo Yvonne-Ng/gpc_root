@@ -1078,20 +1078,34 @@ double CRbfKern::getVariance() const
 {
   return variance;
 }
-void CRbfKern::_init()
+void CRbfKern::_init(double lower_width, double upper_width, double lower_var, double upper_var)
 {
   nParams = 2;
   setType("rbf");
   setName("RBF");
   setParamName("inverseWidth", 0);
-  addTransform(CTransform::defaultPositive(), 0);
+  //addTransform(CTransform::defaultPositive(), 0);
+  //NEW CHANGE TO TEST BOUND
+  
+  //addTransform(CTransform::VariableBound(lower_width, upper_width), 0);
   setParamName("variance", 1);
-  addTransform(CTransform::defaultPositive(), 1);
+  //addTransform(CTransform::VariableBound(lower_var, upper_var), 1);
   setStationary(true);
 }
+
+void CRbfKern::setBound(int var, double lower, double upper){
+
+  addTransform(CTransform::VariableBound(lower, upper), var);
+  //addTransform(CTransform::defaultZeroOne(lower, upper), var);
+
+
+}
+
+
+
 void CRbfKern::setInitParam()
 {
-  inverseWidth = 1.0;
+  inverseWidth =1.0;
   variance = 1.0;
 }
 

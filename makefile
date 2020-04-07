@@ -53,7 +53,7 @@ gp.o: gp.cpp gp.h \
 
 dummy_main.o: dummy_main.cpp gp_TH1.h \
 	ndlexceptions.h ndlstrutil.h CMatrix.h ndlassert.h \
-  CNdlInterfaces.h ndlutil.h ndlfortran.h lapack.h CKern.h CTransform.h \
+  CNdlInterfaces.h ndlutil.h ndlfortran.h CKern.h CTransform.h \
   CDataModel.h CDist.h CGp.h CMltools.h COptimisable.h CNoise.h CClctrl.h
 	$(CC) -c dummy_main.cpp -o dummy_main.o $(CCFLAGS) $(ROOT_CFLAGS)
 

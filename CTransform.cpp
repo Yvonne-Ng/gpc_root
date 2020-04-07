@@ -5,13 +5,31 @@ CTransform* CTransform::defaultPositive()
 {
   return new CExpTransform();
 }
+CTransform* CTransform::VariableBound(double lower, double upper){
+  cout<<"CTransform Variable Bound is called, lower: "<<lower<<" upper: "<<upper<<endl;
+  return new positiveBoundTransform(lower, upper);
+}
 
-positiveBoundTransform::positiveBoundTransform(double lower, double upper)
+positiveBoundTransform::positiveBoundTransform(double lower=-100, double upper=100)
 {
+  cout<<"Positive bound transform created: lower="<<lower<<" upper: "<<upper<<endl;
   transform = 1;
   lower = lower;
   upper  = upper;
   setType("positivebound");
+}
+
+
+double positiveBoundTransform::atox(double a) const
+{
+  cout<<"positive bound transform atox: lower: "<< lower << " upper: "<<upper<<endl;
+
+  return atox(a, lower, upper);
+}
+
+double positiveBoundTransform::xtoa(double x) const
+{
+  return xtoa(x, lower, upper);
 }
 
 double positiveBoundTransform::atox(double a, double lower, double upper) const
@@ -23,6 +41,7 @@ double positiveBoundTransform::atox(double a, double lower, double upper) const
   else
     return upper;
 }
+
 double positiveBoundTransform::xtoa(double x, double lower, double upper) const
 {
   return ndlutil::invSigmoid_steriod(x, lower, upper);
@@ -47,6 +66,9 @@ CTransform* CTransform::getNewTransformPointer(const string transformType)
     return new CExpTransform();
   else if(transformType=="linear")
     return new CLinearTransform();
+  //TODO add lower and upper bound to this 
+  //else if(transformType=="positivebound")
+  //  return new positiveBoundTransform();
   else
     throw ndlexceptions::Error("Transform type " + transformType + " is currently unknown.");
 }
