@@ -58,6 +58,9 @@ namespace ndlutil {
   // the sigmoid (logistic) function and its inverse.
   double sigmoid(double x);
   double invSigmoid(double x);
+  double invSigmoid(double x);
+
+  double invSigmoid_steriod(double x,double lower,double upper);
   // inverse of error function in double precision (from http://momonga.t.u-tokyo.ac.jp/~ooura/gamerf.html)
   double erfcinv(double x);
 

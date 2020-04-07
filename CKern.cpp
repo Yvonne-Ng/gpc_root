@@ -4216,8 +4216,8 @@ ostream& operator<<(ostream& out, const CKern& kern)
   //cout<<wctype(out)<<endl;
   //cout<<wctype(kern.display(out))<<endl;
   //out <<  kern.display(cout);
-//return out;
-;
+return out;
+
 }
 void writeKernToStream(const CKern& kern, ostream& out)
 {

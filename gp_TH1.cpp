@@ -331,7 +331,10 @@ void gp_TH1::learn(string comment){
     int n=0; 
 
     cout<<"before optimise"<<endl;
-    while (n< 100){
+    int trial_times=2;
+
+
+    while (n<trial_times){
       try {
       pmodel->optimise(1);
       }
@@ -341,10 +344,12 @@ void gp_TH1::learn(string comment){
 
         nudgeInitParams();
         nudgeLearningScale();
+        n++;
 
       //This changes the gradiant of the kernel training
 
-    }
+      }
+      n=trial_times+1;
     }
     // writing the file to be saved//
     // TODO uncomment this 

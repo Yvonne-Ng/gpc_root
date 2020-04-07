@@ -98,6 +98,11 @@ namespace ndlutil {
   {
     return 1.0/(1.0+exp(-x));
   }
+
+  double invSigmoid_steriod(double x, double lower, double upper)
+  {
+    return -log(lower/(x-upper+lower)-1);
+  }
   
   double erfcinv(double x)
   {

@@ -41,7 +41,6 @@ class CTransform
   }
   static CTransform* defaultPositive();
   static CTransform* defaultZeroOne();
-  static CTransform* CTransform::positiveBound(double lower, double upper);
   static CTransform* getNewTransformPointer(const string transformType);
  
  private:
@@ -144,6 +143,24 @@ class CSigmoidTransform : public CTransform
   double atox(double a) const;
   double xtoa(double x) const;
   double gradfact(double x) const;
+  
+ private:
+  bool transform;
+  
+};
+
+class positiveBoundTransform : public CTransform  
+{
+ public:
+  positiveBoundTransform(double lower, double upper);  
+ positiveBoundTransform(const positiveBoundTransform& rhs) : CTransform(rhs), transform(rhs.transform) {}
+
+//CTransform* clone() const {return new positiveBoundTransform(*this);}
+
+  double atox(double a, double lower, double upper) const;
+  double xtoa(double x, double lower, double upper) const;
+  double gradfact(double x) const;
+  double lower, upper;
   
  private:
   bool transform;

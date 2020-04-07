@@ -6,17 +6,33 @@ CTransform* CTransform::defaultPositive()
   return new CExpTransform();
 }
 
-CTransform* CTransform::positiveBound(double lower, double upper)
+positiveBoundTransform::positiveBoundTransform(double lower, double upper)
 {
-  if (lower ==0.0)
-    lower=eps;
-
-  if (upper ==0.0)
-    upper=eps;
-  if lower 
-
-  return new CExpTransform();
+  transform = 1;
+  lower = lower;
+  upper  = upper;
+  setType("positivebound");
 }
+
+double positiveBoundTransform::atox(double a, double lower, double upper) const
+{
+  if(a<-limVal)
+    return lower;
+  if(a<limVal)
+    return (upper-lower)* ndlutil::sigmoid(a)+lower;
+  else
+    return upper;
+}
+double positiveBoundTransform::xtoa(double x, double lower, double upper) const
+{
+  return ndlutil::invSigmoid_steriod(x, lower, upper);
+}
+
+double positiveBoundTransform::gradfact(double x) const
+{
+  return x*(1-x);
+}
+
 CTransform* CTransform::defaultZeroOne()
 {
   return new CSigmoidTransform();

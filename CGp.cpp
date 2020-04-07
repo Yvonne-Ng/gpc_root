@@ -773,31 +773,23 @@ void CGp::_updateK() const
     // could be made multi-threaded.
     //
     //
-    cout<<"_update k : "<<endl;
-    cout<<"got here 0.1 : "<<endl;
     for(unsigned int i=0; i<getNumData(); i++) 
     {
 
-      cout<<"got here 0.2 : "<<endl;
       K.setVal(pkern->diagComputeElement(*pX, i), i, i);
 
-      cout<<"got here 0.3 : "<<endl;
       for(unsigned int j=0; j<i; j++) 
       {
 
-      cout<<"got here 0.4 : "<<endl;
-      kVal=pkern->computeElement(*pX, i, *pX, j);
+        kVal=pkern->computeElement(*pX, i, *pX, j);
 
-      cout<<"got here 0.5 : "<<endl;
-      K.setVal(kVal, i, j);
+        K.setVal(kVal, i, j);
 
-      cout<<"got here 0.6 : "<<endl;
-      K.setVal(kVal, j, i);
+        K.setVal(kVal, j, i);
       }
     }
     K.setSymmetric(true);
 
-    cout<<"got here 0.7 : "<<endl;
     break;
   case DTC:
   case DTCVAR:
@@ -1012,41 +1004,35 @@ void CGp::_updateInvK(unsigned int dim) const
 // compute the approximation to the log likelihood.
 double CGp::logLikelihood() const
 {
-  cout<<"got here: "<<endl;
   updateK();
 
-  cout<<"got here 0.1 : "<<endl;
   updateAD();
 
-  cout<<"got here 0.2 : "<<endl;
   double L=0.0;
 
   switch(getApproximationType()) 
   {
   case FTC:
 
-    cout<<"got here:FTC "<<endl;
     if(isSpherical()) 
     {
 
-      cout<<"got here 1 "<<endl;
       CMatrix invKm(invK.getRows(), 1);
 
-      cout<<"got here 2 "<<endl;
       for(unsigned int j=0; j<getOutputDim(); j++) 
       {
-	// This computes trace(invK*M*M'), column by column of M
-	// invKm := invK * m(:,j)
-    //
-      cout<<"got here 2.1 "<<endl;
-	invKm.symvColCol(0, invK, m, j, 1.0, 0.0, "u");
-	// L += invKm' * m(:,j)
-	L += invKm.dotColCol(0, m, j);
+        // This computes trace(invK*M*M'), column by column of M
+        // invKm := invK * m(:,j)
+        //
+          cout<<"got here 2.1 "<<endl;
+          invKm.symvColCol(0, invK, m, j, 1.0, 0.0, "u");
+          // L += invKm' * m(:,j)
+          L += invKm.dotColCol(0, m, j);
 
-      cout<<"got here 2.2 "<<endl;
-	L += logDetK; 
+          cout<<"got here 2.2 "<<endl;
+          L += logDetK; 
 
-      cout<<"got here 2.3 "<<endl;
+          cout<<"got here 2.3 "<<endl;
       }
     }
     else 
