@@ -50,6 +50,7 @@ class gp_TH1{
   void relearn();
   void printXY();
 
+
   void draw_root();
   void exitError(const string error);
 

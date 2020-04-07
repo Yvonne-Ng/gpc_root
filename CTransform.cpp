@@ -5,6 +5,18 @@ CTransform* CTransform::defaultPositive()
 {
   return new CExpTransform();
 }
+
+CTransform* CTransform::positiveBound(double lower, double upper)
+{
+  if (lower ==0.0)
+    lower=eps;
+
+  if (upper ==0.0)
+    upper=eps;
+  if lower 
+
+  return new CExpTransform();
+}
 CTransform* CTransform::defaultZeroOne()
 {
   return new CSigmoidTransform();

@@ -41,6 +41,7 @@ class CTransform
   }
   static CTransform* defaultPositive();
   static CTransform* defaultZeroOne();
+  static CTransform* CTransform::positiveBound(double lower, double upper);
   static CTransform* getNewTransformPointer(const string transformType);
  
  private:

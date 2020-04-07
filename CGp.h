@@ -485,7 +485,7 @@ public:
 void writeGpToStream(const CGp& model, ostream& out);
 void writeGpToFile(const CGp& model, const string modelFileName, const string comment="");
 CGp* readGpFromStream(istream& in);
-CGp* readGpFromFile(const string modelfileName, int verbosity=2);
+CGp* readGpFromFile(const string modelfileName, int verbosity=3);
 
 
 #endif /* CGP_H */

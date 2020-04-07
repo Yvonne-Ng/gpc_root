@@ -1,5 +1,7 @@
 #include "gp_TH1.h"
 #include "gp_config.h"
+#include <stdlib.h>
+
 
 using namespace std;
 
@@ -71,11 +73,11 @@ void gp_TH1::learn(string comment){
 
   
   vector<string> kernelTypes=Config->kernelTypes;
-  cout<<"print all kernels"<<endl;
-  for (auto kernel : kernelTypes){
-    cout<<"kernel"<<kernel;
+  //for (auto kernel : kernelTypes){
+  //  cout<<"kernel"<<kernel;
 
-  }
+  //}
+  cout<<"got here "<<endl;
 
   vector<unsigned int> kernelUsageFlag= Config->kernelUsageFlag;
   vector<double> ratQuadAlphas= Config->ratQuadAlphas;
@@ -97,14 +99,20 @@ void gp_TH1::learn(string comment){
   int iters=Config->iters;
   string modelFileName=Config->modelFileName;
 
+
+  cout<<"got here 0.5"<<endl;
   int inputDim = X.getCols();    
 
+
+  cout<<"got here 0.7"<<endl;
   //CCmpndKern kern(X);
   //cannot call constructor again
   //kern(X);
 
   //update X
   kern.updateX(X);
+
+  cout<<"got here 1"<<endl;
   vector<CKern*> kernels;
   for(int i=0; i<kernelTypes.size(); i++) {
     CMatrix *M = 0;
@@ -141,7 +149,7 @@ void gp_TH1::learn(string comment){
       else
         kernels.push_back(new CRbfKern(*M));
       if(rbfInvWidths[i]!=-1.0)
-        kernels[i]->setParam(rbfInvWidths[i], 0); /// set rbf inverse width as specified.
+        kernels[i]->setParam(rbfInvWidths[i], 1); /// set rbf inverse width as specified.
       if(variances[i]!=-1.0)
         kernels[i]->setParam(variances[i], 1); /// set variance parameter as specified.
 	}
@@ -190,16 +198,19 @@ void gp_TH1::learn(string comment){
       kernels.push_back(new CWhiteKern(*M));
       if(variances[i]!=-1.0)
         kernels[i]->setParam(variances[i], 0); // set variance parameter as specified.
+
+    cout<<"got here 2"<<endl;
     }
     else {
       exitError("Unknown covariance function type: " + kernelTypes[i]);
     }
 
-    for (auto k :kernels){
-      cout<<"kernels from kernels vector"<<endl;
-      cout<<k<<endl;
-    }
+    //for (auto k :kernels){
+    //  cout<<"kernels from kernels vector"<<endl;
+    //  cout<<k<<endl;
+    //}
 
+    cout<<"got here 3"<<endl;
     switch (kernelUsageFlag[i]) {
     case KERNEL_USAGE_FWD:
       kern.addKern(kernels[i]);
@@ -243,6 +254,8 @@ void gp_TH1::learn(string comment){
     else {
       exitError("Unknown sparse approximation type: " + approxTypeStr + ".");
     }
+
+    cout<<"got here 4"<<endl;
     if(activeSetSize==-1)
       exitError("You must choose an active set size (option -a) for the command learn.");
   }
@@ -259,12 +272,13 @@ void gp_TH1::learn(string comment){
   if(scaleData)
     scale.deepCopy(stdCol(y));
   
+    cout<<"got here 5"<<endl;
   //replacing the function pmodel by the class pmodel
   //CGp* pmodel;
   CMatrix bK(1,1,0.0);
   pmodel = new CGp(&kern, &noise, &X, approxType, activeSetSize, getVerbosity());
 
-  cout<<"at initialization: "<<typeid(pmodel->getKernel()).name()<<endl;
+  //cout<<"at initialization: "<<typeid(pmodel->getKernel()).name()<<endl;
   
   if(optimiser=="scg")
     pmodel->setDefaultOptimiser(CGp::SCG);
@@ -276,35 +290,83 @@ void gp_TH1::learn(string comment){
     pmodel->setDefaultOptimiser(CGp::BFGS);
   else
     exitError("Unrecognised optimiser type: " + optimiser);
-  pmodel->setBetaVal(1); //
-  pmodel->setScale(scale);
-  pmodel->setBias(bias);
-  pmodel->updateM();
-  pmodel->setOutputScaleLearnt(outputScaleLearnt);
-  //writeGpToFile(*pmodel, "c:\\gp_model", "Write for testing of model");  
-  pmodel->optimise(iters);
-  // writing the file to be saved
-  writeGpToFile(*pmodel, modelFileName, comment);
 
-  cout<<"at end of learn kernel type: "<<typeid(pmodel->getKernel()).name()<<endl;
+    cout<<"got here 6"<<endl;
+    pmodel->setBetaVal(1); //
+    pmodel->setScale(scale);
+    pmodel->setBias(bias);
+    pmodel->updateM();
+    pmodel->setOutputScaleLearnt(outputScaleLearnt);
+    //writeGpToFile(*pmodel, "c:\\gp_model", "Write for testing of model");  
+    //
+    cout<<"got here 7"<<endl;
+    pmodel->setVerbosity(3);
+
+    //pmodel->optimise(iters);
+    //
+    auto nudgeLearningScale = [&](){
+
+      //Can't multiply matrix directly
+        //pmodel->setBetaVal(1*rand()); //
+        //pmodel->setScale(scale*rand());
+        //pmodel->setBias(bias*rand());
+        //pmodel->updateM();
+        //pmodel->setOutputScaleLearnt(outputScaleLearnt*rand());
+        ;
+
+    };
+    auto nudgeInitParams = [&] () {
+
+        for(int i=0; i<kernelTypes.size(); i++) {
+          //TODO for all kerneltypes other than rbf too
+          if(kernelTypes[i]=="rbf") {
+            if(rbfInvWidths[i]!=-1.0)
+              kernels[i]->setParam(rbfInvWidths[i], 1*rand()); 
+            if(variances[i]!=-1.0)
+              kernels[i]->setParam(variances[i], 1*rand()); 
+          } 
+        }
+    };
+    
+    int n=0; 
+
+    cout<<"before optimise"<<endl;
+    while (n< 100){
+      try {
+      pmodel->optimise(1);
+      }
+      catch (int e){
+        cout<<"an exception occured in optimization"<<endl;
+        cout<<e<<endl;
+
+        nudgeInitParams();
+        nudgeLearningScale();
+
+      //This changes the gradiant of the kernel training
+
+    }
+    }
+    // writing the file to be saved//
+    // TODO uncomment this 
+    //
+    cout<<"after optimise"<<endl;
+    writeGpToFile(*pmodel, modelFileName, comment);
+
+    cout<<"got here 8"<<endl;
+
+  //cout<<"at end of learn kernel type: "<<typeid(pmodel->getKernel()).name()<<endl;
 
   //cout<<"type of pkern: "<<typeid(*pkern).name()<<endl;
 
-  cout<<"type of pkern: "<<typeid(*pmodel->getKernel()).name()<<endl;
-  cout<<"pkern address: "<<pmodel->getKernel()<<endl;
+  //cout<<"type of pkern: "<<typeid(*pmodel->getKernel()).name()<<endl;
+  //cout<<"pkern address: "<<pmodel->getKernel()<<endl;
+  //
 }
   
 
+
 TH1D* gp_TH1::fitAndOutput(bool output_dat){
 
-  // writing the prediction to a TH1
-  //
-  //
-  cout<<"at beginning of fitandoutput: "<<typeid(pmodel->getKernel()).name()<<endl;
-
-  cout<<"type of pkern: "<<pmodel->getKernel()<<endl;
-
-  cout<<"pkern address: "<<typeid(*pmodel->getKernel()).name()<<endl;
   double pointSize = 2;
   double lineWidth = 2;
   int resolution = 80;
@@ -315,12 +377,6 @@ TH1D* gp_TH1::fitAndOutput(bool output_dat){
   string labelFileName="";
 
 
-  //writing the input x y to the model
-  //
-  //
-
-
-  //Seems like I will need this
   pmodel->py=&y;
   pmodel->updateM();
   pmodel->pX=&X;
@@ -403,9 +459,9 @@ TH1D* gp_TH1::fitAndOutput(bool output_dat){
       double x;
       int j;
       double xbins[numx];
-      cout<<"input_minX: "<<input_minX<<endl;
-      cout<<"input_maxX: "<<input_maxX<<endl;
-      cout<<"X: "<<X<<endl;
+      //cout<<"input_minX: "<<input_minX<<endl;
+      //cout<<"input_maxX: "<<input_maxX<<endl;
+      //cout<<"X: "<<X<<endl;
       int i;
       for (j=input_minX; j< input_maxX-1;j++){
           i=j-input_minX;
@@ -422,14 +478,14 @@ TH1D* gp_TH1::fitAndOutput(bool output_dat){
       
       CMatrix outVals(Xinvals.getRows(), pmodel->getOutputDim());
       CMatrix stdVals(Xinvals.getRows(), pmodel->getOutputDim());
-      cout<<"xinvals row: "<<Xinvals.getRows()<<endl;
-
-      cout<<"output dimension: "<< pmodel->getOutputDim()<<endl;
-      cout<<"input X dimension row: "<<X.getRows()<<endl;
-      cout<<"input X dimension column: "<<X.getCols()<<endl;
-      cout<<"input y dimension rows: "<<y.getRows()<<endl;
-      cout<<"input y dimension column: "<<y.getCols()<<endl;
-
+//      cout<<"xinvals row: "<<Xinvals.getRows()<<endl;
+//
+//      cout<<"output dimension: "<< pmodel->getOutputDim()<<endl;
+//      cout<<"input X dimension row: "<<X.getRows()<<endl;
+//      cout<<"input X dimension column: "<<X.getCols()<<endl;
+//      cout<<"input y dimension rows: "<<y.getRows()<<endl;
+//      cout<<"input y dimension column: "<<y.getCols()<<endl;
+//
 
 
       pmodel->out(outVals, stdVals, Xinvals);
@@ -476,11 +532,19 @@ TH1D* gp_TH1::fitAndOutput(bool output_dat){
 
     return output_hist;
     }// if 1d data
+    else{
+
+    exitError("not 1d data .");
+    TH1D * h1;
+    return h1;
+    }
     
   }//if noise type==gaussian
   else 
   {
     exitError("Unknown noise model for gnuplot output.");
+    TH1D * h1;
+    return h1;
   }
 }
 

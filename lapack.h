@@ -22,7 +22,7 @@ extern "C" void dsyev_(const char* jobz,
 		       double *w,        // eigenvalues
 		       double *work,
 		       const int& lwork,
-		       int &info);
+		       int &info){};
 #endif // ndef _NOSYEV	    
 // Solve A*X=B for X ... i.e. X=A^-1*B.
 extern "C" void dsysv_(const char* uplo,
@@ -35,16 +35,16 @@ extern "C" void dsysv_(const char* uplo,
 		      const int& ldb,
 		      double *work,
 		      const int& lwork,
-		      const int& info);
+		      const int& info){};
 // Compute an LU factorization of a general M by N matrix A.
 extern "C" void dgetrf_(
-			const int &m,	 // (input)
+			const int &m,	 // (input){}
 			const int &n,	 // (input)
 			double *a,	 // a[n][lda] (input/output)
 			const int &lda,	 // (input)
 			int *ipiv,	 // ipiv[min(m,n)] (output)
 			int &info	 // (output)
-			);
+			){};
 // Compute the inverse using the LU factorization computed by dgetrf.
 extern "C" void dgetri_(
 			const int &n,	 // (input)
@@ -54,7 +54,7 @@ extern "C" void dgetri_(
 			double *work,	 // work[lwork] (workspace/output)
 			const int &lwork, // (input)
 			int &info	 // (output)
-			);
+			){};
 // Compute the Cholesky factorization of a real symmetric positive definite matrix A.
 extern "C" void dpotrf_(
 			const char* t,  // whether upper or lower triangluar 'U' or 'L'
@@ -62,7 +62,7 @@ extern "C" void dpotrf_(
 			double *a,	// a[n][lda] (input/output)
 			const int &lda,	// (input)
 			int &info	// (output)
-			);
+			){};
 // Compute the inverse of a real symmetric positive definite matrix A using the Cholesky factorization computed by dpotrf.
 extern "C" void dpotri_(
 			const char* t,  // whether upper or lower triangular 'U' or 'L'
@@ -70,7 +70,7 @@ extern "C" void dpotri_(
 			double *a,      // a[n][lda]
 			const int &lda, // (input)
 			int &info       // (output)
-			);
+			){};
 
 // ***** BLAS Level 1 operations *****
 
@@ -79,18 +79,18 @@ extern "C" void dswap_(const int& n,
 		      double *x, 
 		      const int& incx, 
 		      double *y, 
-		      const int& incy);
+		      const int& incy){};
 // Perform y:= x
 extern "C" void dcopy_(const int& n, 
 		      const double *x, 
 		      const int& incx, 
 		      double *y, 
-		      const int& incy);
+		      const int& incy){};
 // Perform y:= ay
 extern "C" void dscal_(const int& n, 
 		      const double& alpha, 
 		      double* y, 
-		      const int& incy);
+		      const int& incy){};
 
 // Perform y := ax + y
 extern "C" void daxpy_(const int& n, 
@@ -98,17 +98,17 @@ extern "C" void daxpy_(const int& n,
 		       const double *x, 
 		       const int& incx, 
 		       double *y, 
-		       const int& incy);
+		       const int& incy){};
 // Return xTy
 extern "C" double ddot_(const int& n,
 			const double *x,
 			const int& incx,
 			const double *y,
-			const int& incy);
+			const int& incy){return 0.0;};
 // Return xTx
 extern "C" double dnrm2_(const int& n,
 			 const double *x,
-			 const int& incx);
+			 const int& incx){return 0.0;};
 // ***** BLAS Level 2 operations *****
 
 // Perform one of the matrix-vector operations y:= alpha*op(A)*x + beta*y
@@ -124,7 +124,7 @@ extern "C" void dgemv_(
 		       const double& beta, //prefactor on y.
 		       double *y, // elements of y (output stored here).
 		       const int& incy // increment of y.
-		       );
+		       ){};
 
 // Perform one of the matrix-vector operations y:= alpha*A*x + beta*y for A symmetric.
 extern "C" void dsymv_(
@@ -138,7 +138,7 @@ extern "C" void dsymv_(
 		       const double& beta, // prefactor on y.
 		       double *y, // elements of y (output stored here).
 		       const int& incy // increment of y.
-		       );
+		       ){};
 // perform a rank one update of the matrix A, A:= alpha*xy' + A
 extern "C" void dger_(const int& m, //
 		      const int& n,
@@ -148,7 +148,7 @@ extern "C" void dger_(const int& m, //
 		      const double *y,
 		      const int& incy,
 		      const double *A,
-		      const int& lda);
+		      const int& lda){};
 
 // perform a rank one update of the symmetrix matrix A, A:= alpha*xx' + A
 extern "C" void dsyr_(const char* type, //
@@ -157,7 +157,7 @@ extern "C" void dsyr_(const char* type, //
 		      const double *x,
 		      const int& incx,
 		      const double *A,
-		      const int& lda);
+		      const int& lda){};
 
 // ***** BLAS Level 3 operations *****
 
@@ -176,7 +176,7 @@ extern "C" void dgemm_(
 		       const double &beta, //prefactor on C.
 		       double *C, // elements of C (output stored here).
 		       const int &ldc // first dimension of C.
-		       );
+		       ){};
 
 
 // Perform one of the symmetric rank K operations C:=alpha*A*A' + beta*C.
@@ -190,7 +190,7 @@ extern "C" void dsyrk_(
 		       const int& lda,
 		       const double& beta,
 		       const double* C,
-		       const int& ldc);
+		       const int& ldc){};
 
 // Perform triangular matrix matrix operation.
 extern "C" void dtrmm_(const char* side,
@@ -203,7 +203,7 @@ extern "C" void dtrmm_(const char* side,
 		       const double* A,
 		       const int& lda,
 		       double* B,
-		       const int& ldb);
+		       const int& ldb){};
 // Perform inverse triangular matrix matrix operation.
 extern "C" void dtrsm_(const char* side,
 		       const char* type,
@@ -215,7 +215,7 @@ extern "C" void dtrsm_(const char* side,
 		       const double* A,
 		       const int& lda,
 		       double* B,
-		       const int& ldb);
+		       const int& ldb){};
 		       
 // Perform symmetric matrix matrix operation.
 extern "C" void dsymm_(const char* side,
@@ -229,6 +229,6 @@ extern "C" void dsymm_(const char* side,
 		       const int& ldb,
 		       const double& beta,
 		       double* C,
-		       const int& ldc);
+		       const int& ldc){};
 
 #endif

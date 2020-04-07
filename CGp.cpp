@@ -748,9 +748,17 @@ void CGp::updateK() const
 {
   if(!isKupToDate())
   {
+    
+    cout<<"update K : "<<endl;
     _updateK();
+
+    cout<<"update inv K : "<<endl;
     _updateInvK();
+
+    cout<<"update ADup: "<<endl;
     setADupToDate(false);
+
+    cout<<"update KDup: "<<endl;
     setKupToDate(true);
   }
 }
@@ -763,17 +771,33 @@ void CGp::_updateK() const
   case FTC:
     // TODO: These computes should be done with pkern->compute, which 
     // could be made multi-threaded.
+    //
+    //
+    cout<<"_update k : "<<endl;
+    cout<<"got here 0.1 : "<<endl;
     for(unsigned int i=0; i<getNumData(); i++) 
     {
+
+      cout<<"got here 0.2 : "<<endl;
       K.setVal(pkern->diagComputeElement(*pX, i), i, i);
+
+      cout<<"got here 0.3 : "<<endl;
       for(unsigned int j=0; j<i; j++) 
       {
-	kVal=pkern->computeElement(*pX, i, *pX, j);
-	K.setVal(kVal, i, j);
-	K.setVal(kVal, j, i);
+
+      cout<<"got here 0.4 : "<<endl;
+      kVal=pkern->computeElement(*pX, i, *pX, j);
+
+      cout<<"got here 0.5 : "<<endl;
+      K.setVal(kVal, i, j);
+
+      cout<<"got here 0.6 : "<<endl;
+      K.setVal(kVal, j, i);
       }
     }
     K.setSymmetric(true);
+
+    cout<<"got here 0.7 : "<<endl;
     break;
   case DTC:
   case DTCVAR:
@@ -941,18 +965,29 @@ void CGp::updateAD() const {
 // update invK with the inverse of the kernel plus beta terms computed from the active points.
 void CGp::_updateInvK(unsigned int dim) const
 {
+  cout<<"update IK: "<<endl;
   double jit = 0.0;
   switch(getApproximationType()) {
   case FTC:
+
+  cout<<"update IK: "<<endl;
     jit = LcholK.jitChol(K); // this will initially be upper triangular.
     if(jit>1e-2)
       if(getVerbosity()>2)
 	cout << "Warning: jitter of " << jit << " added to K in _updateInvK()." << endl;
 
     logDetK = logDet(LcholK);
+
+    cout<<"update IK 2: "<<endl;
     invK.setSymmetric(true);
+
+    cout<<"update IK 3: "<<endl;
     invK.pdinv(LcholK);
+
+    cout<<"update IK 4: "<<endl;
     LcholK.trans();
+
+    cout<<"update IK 5: "<<endl;
     break;
   case DTC:
   case DTCVAR:
@@ -977,23 +1012,41 @@ void CGp::_updateInvK(unsigned int dim) const
 // compute the approximation to the log likelihood.
 double CGp::logLikelihood() const
 {
+  cout<<"got here: "<<endl;
   updateK();
+
+  cout<<"got here 0.1 : "<<endl;
   updateAD();
+
+  cout<<"got here 0.2 : "<<endl;
   double L=0.0;
+
   switch(getApproximationType()) 
   {
   case FTC:
+
+    cout<<"got here:FTC "<<endl;
     if(isSpherical()) 
     {
+
+      cout<<"got here 1 "<<endl;
       CMatrix invKm(invK.getRows(), 1);
+
+      cout<<"got here 2 "<<endl;
       for(unsigned int j=0; j<getOutputDim(); j++) 
       {
 	// This computes trace(invK*M*M'), column by column of M
 	// invKm := invK * m(:,j)
+    //
+      cout<<"got here 2.1 "<<endl;
 	invKm.symvColCol(0, invK, m, j, 1.0, 0.0, "u");
 	// L += invKm' * m(:,j)
 	L += invKm.dotColCol(0, m, j);
+
+      cout<<"got here 2.2 "<<endl;
 	L += logDetK; 
+
+      cout<<"got here 2.3 "<<endl;
       }
     }
     else 
@@ -1004,7 +1057,10 @@ double CGp::logLikelihood() const
   case DTC:    
   case DTCVAR:
     if(isSpherical()) 
+
     {
+
+      cout<<"got here DTCVAR: "<<endl;
       CMatrix e(numActive, 1);
       CMatrix invAe(numActive, 1);
       L+= (double)getOutputDim()*
@@ -1026,6 +1082,8 @@ double CGp::logLikelihood() const
     break;
     
   case FITC:
+
+    cout<<"got here FITC: "<<endl;
     if(isSpherical()) 
     {
       L+=((double)numActive - (double)getNumData())*log(getBetaVal()) + (double)getNumData()*ndlutil::LOGTWOPI;
@@ -1053,6 +1111,8 @@ double CGp::logLikelihood() const
     break;
 
   case PITC:
+
+    cout<<"got here PITC: "<<endl;
     if(isSpherical()) 
     {
       throw ndlexceptions::NotImplementedError("PITC not yet implemented.");
@@ -1159,6 +1219,7 @@ void CGp::updateG() const
   switch(getApproximationType()) 
   {
   case FTC:
+
     if(isOptimiseX()) // test if GP-LVM is used.
     {
       gXorW.zeros();
@@ -1606,13 +1667,22 @@ void CGp::optimise(unsigned int iters)
     cout << "Initial model:" << endl;
     display(cout);
   }
+  cout<<"got here "<<endl;
   if(getVerbosity()>2 && getOptNumParams()<40)
     checkGradients();
+  
+  cout<<"got here -.5"<<endl;
   setMaxIters(iters);
+
+
+  cout<<"got here 1"<<endl;
   runDefaultOptimiser();
+
+  cout<<"got here 2"<<endl;
   
   if(getVerbosity()>1)
     cout << "... done. " << endl;
+
   if(getVerbosity()>0)
     display(cout);
 }

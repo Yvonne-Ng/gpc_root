@@ -1711,7 +1711,8 @@ C---------- Last card of DERFCX ----------
 C     ALGORITHM 488 COLLECTED ALGORITHMS FROM ACM.
 C     ALGORITHM APPEARED IN COMM. ACM, VOL. 17, NO. 12,
 C     P. 704.
-      FUNCTION DGRAND(N)                                                 GRA   10
+      FUNCTION DGRAND(N)                                              
+C          GRA   10
 C EXCEPT ON THE FIRST CALL GRAND RETURNS A
 C PSEUDO-RANDOM NUMBER HAVING A GAUSSIAN (I.E.
 C NORMAL) DISTRIBUTION WITH ZERO MEAN AND UNIT
@@ -2061,7 +2062,8 @@ C ERROR RETURNS.
       END
 
 C ACM Algorithm 380.
-      SUBROUTINE DTRANSR(A, M, N, MN, MOVE, IWRK, IOK)                    TRA   10
+      SUBROUTINE DTRANSR(A, M, N, MN, MOVE, IWRK, IOK)        
+C TRA   10
 C *****
 C  ALGORITHM 380 - REVISED
 C *****
